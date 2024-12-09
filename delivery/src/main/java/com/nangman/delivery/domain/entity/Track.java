@@ -11,9 +11,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Date;
 import java.util.UUID;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(name = "p_track")
+@NoArgsConstructor
 public class Track {
 
     @Id
@@ -57,4 +62,17 @@ public class Track {
 
     @Column(name="departure_time")
     private Date departureTime;
+
+    @Builder
+    public Track(Delivery delivery, int sequence, UUID shipperId, UUID fromHubId, UUID toHubId, String address, int expectDistance, int expectTime) {
+        this.delivery = delivery;
+        this.sequence = sequence;
+        this.shipperId = shipperId;
+        this.fromHubId = fromHubId;
+        this.toHubId = toHubId;
+        this.address = address;
+        this.expectDistance = expectDistance;
+        this.expectTime = expectTime;
+        this.status = TrackStatus.WAITING;
+    }
 }

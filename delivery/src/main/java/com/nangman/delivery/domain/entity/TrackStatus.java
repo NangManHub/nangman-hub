@@ -1,7 +1,7 @@
 package com.nangman.delivery.domain.entity;
 
 public enum TrackStatus {
-    WAIT,
+    WAITING,
     MOVING,
     ARRIVE
 }
