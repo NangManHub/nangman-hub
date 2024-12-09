@@ -8,6 +8,7 @@ import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,6 +23,7 @@ public class BaseTimeEntity {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    @CreatedBy
     private UUID createdBy;
 
     @LastModifiedDate
