@@ -15,4 +15,6 @@ public interface HubClient {
     @GetMapping("/hubs/managers/{managerId}")
     HubDto getHubByManagerId(@PathVariable UUID managerId);
 
+    // TODO: test 진행 시 fallback method 추가
+
 }
