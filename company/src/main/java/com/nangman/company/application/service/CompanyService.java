@@ -26,7 +26,7 @@ public class CompanyService {
     public CompanyPostResponse createCompany(CompanyPostRequest request) {
         // TODO: UserRole이 MANAGER면 request hub ID와 담당자의 hub ID가 같은 지 확인
         if (getUserRoleFromAuthentication() == UserRole.MANAGER) {
-            // UUID hubId = hubClient.getHubId(managerId);
+            // UUID hubId = hubClient.getHubByManagerId(managerId);
             UUID hubId = UUID.randomUUID();
             if (!request.hubId().equals(hubId)) {
                 throw new HubNotMatchedException();
