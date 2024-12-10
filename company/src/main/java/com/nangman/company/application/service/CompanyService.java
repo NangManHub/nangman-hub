@@ -5,6 +5,8 @@ import com.nangman.company.application.dto.UserDto;
 import com.nangman.company.application.dto.request.CompanyPostRequest;
 import com.nangman.company.application.dto.response.CompanyGetResponse;
 import com.nangman.company.application.dto.response.CompanyPostResponse;
+import com.nangman.company.common.exception.ExceptionStatus;
+import com.nangman.company.common.exception.HubNotMatchedException;
 import com.nangman.company.domain.entity.Company;
 import com.nangman.company.domain.enums.UserRole;
 import com.nangman.company.presentation.CompanyRepository;
@@ -27,8 +29,7 @@ public class CompanyService {
             // UUID hubId = hubClient.getHubId(managerId);
             UUID hubId = UUID.randomUUID();
             if (!request.hubId().equals(hubId)) {
-                // TODO: Exception 처리
-                log.info("해당 HUB ID는 담당 HUB가 아닙니다.");
+                throw new HubNotMatchedException();
             }
         }
 

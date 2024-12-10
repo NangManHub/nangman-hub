@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ExceptionStatus {
-    COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, "CUSTOM_001", "Company를 찾을 수 없습니다.");
+    COMPANY_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMPANY_001", "Company를 찾을 수 없습니다."),
+    HUB_NOT_MATCHED(HttpStatus.BAD_REQUEST, "COMPANY_002", "담당 Hub가 아닙니다.");
 
     private final int status;
     private final String customCode;
