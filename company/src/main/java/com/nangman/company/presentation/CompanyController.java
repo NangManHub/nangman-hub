@@ -3,6 +3,8 @@ package com.nangman.company.presentation;
 import com.nangman.company.application.dto.request.CompanyPostRequest;
 import com.nangman.company.application.dto.response.CompanyPostResponse;
 import com.nangman.company.application.service.CompanyService;
+import com.nangman.company.common.interceptor.Auth;
+import com.nangman.company.domain.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyController {
     private final CompanyService companyService;
 
+    @Auth(role = {UserRole.MASTER, UserRole.MANAGER})
     @PostMapping
     public ResponseEntity<CompanyPostResponse> createCompany(
             @RequestBody CompanyPostRequest request) {
-        // TODO: 접근 권한 제어 로직 추가
         return ResponseEntity.ok(companyService.createCompany(request));
     }
 
