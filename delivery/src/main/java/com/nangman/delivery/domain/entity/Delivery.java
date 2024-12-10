@@ -57,6 +57,7 @@ public class Delivery {
         this.address = address;
         this.recipient = recipient;
         this.orderId = orderId;
+        this.status = DeliveryStatus.WAITING;
     }
 
     public void updateTrack(Track track) {
