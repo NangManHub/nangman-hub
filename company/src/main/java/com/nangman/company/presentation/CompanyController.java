@@ -29,7 +29,6 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.createCompany(request));
     }
 
-    @Auth(role = {UserRole.MASTER, UserRole.MANAGER, UserRole.AGENT})
     @GetMapping("/{companyId}")
     public ResponseEntity<CompanyGetResponse> getCompany(@PathVariable UUID companyId) {
         return ResponseEntity.ok(companyService.getCompany(companyId));
