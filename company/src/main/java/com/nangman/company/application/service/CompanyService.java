@@ -1,6 +1,9 @@
 package com.nangman.company.application.service;
 
+import com.nangman.company.application.dto.HubDto;
+import com.nangman.company.application.dto.UserDto;
 import com.nangman.company.application.dto.request.CompanyPostRequest;
+import com.nangman.company.application.dto.response.CompanyGetResponse;
 import com.nangman.company.application.dto.response.CompanyPostResponse;
 import com.nangman.company.domain.entity.Company;
 import com.nangman.company.domain.enums.UserRole;
@@ -31,6 +34,16 @@ public class CompanyService {
 
         Company company = companyRepository.save(request.toEntity());
         return CompanyPostResponse.from(company);
+    }
+
+    public CompanyGetResponse getCompany(UUID companyId) {
+        Company company = companyRepository.getById(companyId);
+        // TODO: Hub, Agent 가져오는 Feign Client 개발
+        // HubDto hub = hubClient.getHubById(company.getHubId());
+        // UserDto agent = userClient.getUserById(company.getAgentId());
+        return CompanyGetResponse.of(company,
+                new HubDto(UUID.randomUUID(), "name", "address", UserDto.createTmpUser()),
+                UserDto.createTmpUser());
     }
 
     private UUID getUserIdFromAuthentication() {
