@@ -22,8 +22,8 @@ public class AuthController {
 
     private final UserService userService;
 
-    @PostMapping("/singup")
-    public ResponseEntity<?> singup(@RequestBody SignupRequest signupRequest){
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest){
 
         log.info("username : {}", signupRequest.username());
         log.info("password : {}", signupRequest.password());
@@ -31,7 +31,7 @@ public class AuthController {
         log.info("role : {}", signupRequest.role());
         log.info("slackId : {}", signupRequest.slackId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.singUp(signupRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.signup(signupRequest));
     }
 
     @PostMapping("/signin")

@@ -23,7 +23,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public SignupResponse singUp(SignupRequest signupRequest) {
+    public SignupResponse signup(SignupRequest signupRequest) {
 
         if (userRepository.findByUsername(signupRequest.username()).isPresent()) {
             throw new CustomException(ExceptionType.DUPLICATE_USER_NAME);
