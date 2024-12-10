@@ -1,5 +1,6 @@
 package com.nangman.company.domain.entity;
 
+import com.nangman.company.application.dto.request.CompanyPutRequest;
 import com.nangman.company.domain.enums.CompanyType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,4 +47,12 @@ public class Company extends BaseTimeEntity {
     @Column(length = 50, nullable = false)
     @Size(min = 1, max = 50)
     private String address;
+
+    public void updateAll(CompanyPutRequest request) {
+        this.hubId = request.hubId();
+        this.agentId = request.agentId();
+        this.name = request.name();
+        this.type = request.type();
+        this.address = request.address();
+    }
 }
