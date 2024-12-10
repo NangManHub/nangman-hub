@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +44,13 @@ public class CompanyController {
     public ResponseEntity<CompanyPutResponse> modifyCompany(@PathVariable UUID companyId,
                                                             @RequestBody CompanyPutRequest request) {
         return ResponseEntity.ok(companyService.modifyCompany(companyId, request));
+    }
+
+    @Auth(role = {UserRole.MASTER, UserRole.MANAGER})
+    @DeleteMapping("/{companyId}")
+    public ResponseEntity<Void> deleteCompany(@PathVariable UUID companyId) {
+        companyService.deleteCompany(companyId);
+        return ResponseEntity.ok().build();
     }
 
 }
