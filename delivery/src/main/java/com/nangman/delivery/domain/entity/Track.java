@@ -42,7 +42,7 @@ public class Track {
     @Column(name="to_hub_id")
     private UUID toHubId;
 
-    @Column(name="address", nullable = false, length = 50)
+    @Column(name="address", length = 50)
     private String address;
 
     @Column(name="expectDistance", updatable = false, nullable = false)
