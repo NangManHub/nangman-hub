@@ -7,21 +7,26 @@ import com.nangman.user.common.exception.ExceptionType;
 import com.nangman.user.domain.entity.User;
 import com.nangman.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public SignupResponse singUp(SignupRequest signupRequest) {
 
         if (userRepository.findByUsername(signupRequest.username()).isPresent()) {
             throw new CustomException(ExceptionType.DUPLICATE_USER_NAME);
         }
 
-        User savedUser = userRepository.save(signupRequest.toEntity());
+        User savedUser = userRepository.save(User.create(signupRequest, passwordEncoder.encode(signupRequest.password())));
         return SignupResponse.from(savedUser);
     }
 }

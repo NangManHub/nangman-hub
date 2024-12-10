@@ -1,18 +1,18 @@
 package com.nangman.user.domain.entity;
 
+import com.nangman.user.application.dto.request.SignupRequest;
 import com.nangman.user.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Getter
 @Entity
 @Table(name = "p_users")
+@Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User extends BaseEntity {
 
     @Id
@@ -35,12 +35,13 @@ public class User extends BaseEntity {
     @Column(length = 10, nullable = false)
     private String slackId;
 
-    @Builder
-    public User(String username, String password, String name, UserRole role, String slackId) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.role = role;
-        this.slackId = slackId;
+    public static User create(SignupRequest signupRequest, String encodePassword) {
+        return User.builder()
+                .username(signupRequest.username())
+                .password(encodePassword)
+                .name(signupRequest.name())
+                .role(signupRequest.role())
+                .slackId(signupRequest.slackId())
+                .build();
     }
 }

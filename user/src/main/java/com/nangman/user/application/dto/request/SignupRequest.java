@@ -1,6 +1,5 @@
 package com.nangman.user.application.dto.request;
 
-import com.nangman.user.domain.entity.User;
 import com.nangman.user.domain.entity.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,16 +17,4 @@ public record SignupRequest(
         @NotNull UserRole role,
 
         @NotBlank String slackId
-) {
-
-    public User toEntity() {
-        return User.builder()
-                .username(username)
-                .password(password)
-                .name(name)
-                .role(role)
-                .slackId(slackId)
-                .build();
-    }
-
-}
+) {}
