@@ -70,6 +70,9 @@ public class CompanyService {
             }
         }
 
+        // TODO: HUB 수정 시 존재하는 HUB인지 검증 필요 -> HubClient
+        // TODO: AGENT 수정 시 request agentId가 AGENT role 가진 유저인지 검증 필요 -> UserClient
+
         company.updateAll(request);
         return CompanyPutResponse.from(company);
     }
