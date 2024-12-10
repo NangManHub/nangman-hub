@@ -1,7 +1,7 @@
 # 1. Spring Application 설정
 spring:
   application:
-    name: user-service
+    name: user
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
