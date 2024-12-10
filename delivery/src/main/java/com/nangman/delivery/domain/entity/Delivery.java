@@ -72,7 +72,7 @@ public class Delivery {
     }
 
     public void updateTracks(List<Track> tracks) {
-        Set<Integer> sequences = tracks.stream().map(Track::getSequence).collect(Collectors.toSet());
+        Set<Integer> sequences = this.tracks.stream().map(Track::getSequence).collect(Collectors.toSet());
         tracks.forEach(track -> {
             if (sequences.contains(track.getSequence())) {
                 throw new DomainException(ExceptionStatus.TRACK_SEQUENCE_DUPLICATED);

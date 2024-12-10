@@ -27,7 +27,7 @@ public record DeliveryPostRequest(
                 .orderId(orderId)
                 .build();
 
-        tracks.forEach(track -> delivery.updateTrack(track.toEntity(delivery)));
+        delivery.updateTracks(tracks.stream().map(track -> track.toEntity(delivery)).toList());
 
         return delivery;
     }
