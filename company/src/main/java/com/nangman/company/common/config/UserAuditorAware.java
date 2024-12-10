@@ -1,4 +1,4 @@
-package com.nangman.company.config;
+package com.nangman.company.common.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
