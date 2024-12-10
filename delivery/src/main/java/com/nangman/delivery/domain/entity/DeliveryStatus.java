@@ -1,7 +1,7 @@
 package com.nangman.delivery.domain.entity;
 
 public enum DeliveryStatus {
-    WAIT,
+    WAITING,
     MOVING,
     HUB_ARRIVED,
     DELIVERING
