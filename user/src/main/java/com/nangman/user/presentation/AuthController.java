@@ -4,7 +4,6 @@ import com.nangman.user.application.dto.request.SigninRequest;
 import com.nangman.user.application.dto.request.SignupRequest;
 import com.nangman.user.application.service.UserService;
 import com.nangman.user.common.util.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,22 +41,10 @@ public class AuthController {
         log.info(signinRequest.password());
 
         String accessToken = userService.signin(signinRequest);
-        log.info("token : {}", accessToken);
 
-        response.addCookie(createCookie(accessToken));
+        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
-    }
-
-    // 쿠키 생성 메서드
-    private Cookie createCookie(String accessToken) {
-
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, accessToken.substring(7));
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
     }
 
 }
