@@ -39,5 +39,8 @@ public abstract class BaseEntity {
     // 삭제자
     protected Long deletedBy;
 
+    // 삭제여부
+    protected Boolean isDeleted = false;
+
 }
 
