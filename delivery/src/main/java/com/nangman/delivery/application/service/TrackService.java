@@ -35,9 +35,6 @@ public class TrackService {
         Track track = trackRepository.findById(trackId)
                 .orElseThrow(() -> new ApplicationException(ExceptionStatus.TRACK_NOT_FOUND));
 
-        if(track.getStatus() != TrackStatus.MOVING)
-            throw new ApplicationException(ExceptionStatus.TRACK_NOT_MOVING);
-
         track.complete(request.actualDistance());
 
         return TrackResponse.from(track);
@@ -47,9 +44,6 @@ public class TrackService {
     public TrackResponse departureTrack(UUID trackId) {
         Track track = trackRepository.findById(trackId)
                 .orElseThrow(() -> new ApplicationException(ExceptionStatus.TRACK_NOT_FOUND));
-
-        if(track.getStatus() != TrackStatus.WAITING)
-            throw new ApplicationException(ExceptionStatus.TRACK_NOT_WAITING);
 
         track.departureTrack();
 

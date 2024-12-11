@@ -1,5 +1,7 @@
 package com.nangman.delivery.domain.entity;
 
+import com.nangman.delivery.common.exception.DomainException;
+import com.nangman.delivery.common.exception.ExceptionStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -94,11 +96,17 @@ public class Track extends BaseEntity {
     }
 
     public void departureTrack() {
+        if(this.status != TrackStatus.WAITING) {
+            throw new DomainException(ExceptionStatus.TRACK_NOT_WAITING);
+        }
         this.status = TrackStatus.MOVING;
         this.departureTime = new Date();
     }
 
     public void complete(Integer actualDistance) {
+        if(this.status != TrackStatus.MOVING) {
+            throw new DomainException(ExceptionStatus.TRACK_NOT_MOVING);
+        }
         this.actualDistance = actualDistance;
         this.actualTime = (int) Duration.between(departureTime.toInstant(), new Date().toInstant()).toMinutes();
         this.status = TrackStatus.ARRIVE;
