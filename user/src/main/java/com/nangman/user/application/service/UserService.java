@@ -92,6 +92,15 @@ public class UserService {
         return UserPutResponse.from(user);
     }
 
+    @Transactional
+    public void deleteUser(UUID reqUserId, UUID userId) {
+        verifyMasterRole(reqUserId);
+
+        User user = userRepository.findUser(userId);
+
+        user.delete(reqUserId);
+    }
+
     public void verifyMasterRole(UUID reqUserId){
         User user = userRepository.findByIdAndIsDeletedFalse(reqUserId).orElseThrow(() -> new CustomException(ExceptionType.MASTER_NOT_FOUND));
         if(user.getRole() != UserRole.MASTER) throw new CustomException(ExceptionType.MASTER_ROLE_REQUIRED);

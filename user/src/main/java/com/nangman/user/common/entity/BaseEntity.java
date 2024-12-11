@@ -2,6 +2,7 @@ package com.nangman.user.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @MappedSuperclass
@@ -25,7 +27,7 @@ public abstract class BaseEntity {
     private LocalDateTime updatedAt;
 
     // 삭제시간
-    protected LocalDateTime deletedAt;
+    private LocalDateTime deletedAt;
 
     // 생성자
     @CreatedBy
@@ -37,10 +39,17 @@ public abstract class BaseEntity {
     private Long updatedBy;
 
     // 삭제자
-    protected Long deletedBy;
+    private UUID deletedBy;
 
     // 삭제여부
-    protected Boolean isDeleted = false;
+    @ColumnDefault("false")
+    private Boolean isDeleted = false;
+
+    public void delete(UUID reqUserId) {
+        this.deletedAt = LocalDateTime.now();
+        this.deletedBy = reqUserId;
+        this.isDeleted = true;
+    }
 
 }
 

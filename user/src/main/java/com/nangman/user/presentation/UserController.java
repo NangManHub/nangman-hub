@@ -39,4 +39,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(reqUserId, userId, userPutRequest));
     }
 
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@RequestHeader("X-User-Id") UUID reqUserId, @PathVariable(name = "userId") UUID userId) {
+
+        userService.deleteUser(reqUserId, userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
 }
