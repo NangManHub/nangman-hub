@@ -3,8 +3,6 @@ package com.nangman.hub.application.service;
 import com.nangman.hub.application.dto.HubPostRequest;
 import com.nangman.hub.application.dto.HubResponse;
 import com.nangman.hub.application.dto.HubSearchRequest;
-import com.nangman.hub.common.exception.CustomException;
-import com.nangman.hub.common.exception.ExceptionCode;
 import com.nangman.hub.domain.entity.Hub;
 import com.nangman.hub.domain.entity.QHub;
 import com.nangman.hub.domain.repository.HubRepository;
@@ -53,22 +51,23 @@ public class HubService {
 
     @Transactional(readOnly = true)
     public HubResponse getHubById(UUID hubId) {
-        return HubResponse.from(findHub(hubId));
+        return HubResponse.from(hubRepository.findHub(hubId));
     }
 
     public HubResponse updateHub(UUID hubId, HubPostRequest postRequest) {
-        Hub hub = findHub(hubId);
-        hub.update(postRequest);
+        Hub hub = hubRepository.findHub(hubId);
+        hub.update(
+                postRequest.name(),
+                postRequest.address(),
+                postRequest.latitude(),
+                postRequest.longitude(),
+                postRequest.managerId()
+        );
         return HubResponse.from(hub);
     }
 
     public void deleteHub(UUID hubId, UUID userId) {
-        Hub hub = findHub(hubId);
+        Hub hub = hubRepository.findHub(hubId);
         hub.delete(userId);
-    }
-
-    private Hub findHub(UUID hubId) {
-        return hubRepository.findByIdAndIsDeleteFalse(hubId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.HUB_NOT_FOUND));
     }
 }

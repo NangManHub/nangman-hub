@@ -1,6 +1,5 @@
 package com.nangman.hub.domain.entity;
 
-import com.nangman.hub.application.dto.HubPostRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -43,11 +42,11 @@ public class Hub extends BaseEntity {
         this.managerId = managerId;
     }
 
-    public void update(HubPostRequest postRequest) {
-        this.name = postRequest.name();
-        this.address = postRequest.address();
-        this.latitude = postRequest.latitude();
-        this.longitude = postRequest.longitude();
-        this.managerId = postRequest.managerId();
+    public void update(String name, String address, Double latitude, Double longitude, UUID managerId) {
+        this.name = name;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.managerId = managerId;
     }
 }
