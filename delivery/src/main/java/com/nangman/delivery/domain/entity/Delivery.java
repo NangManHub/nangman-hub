@@ -64,14 +64,27 @@ public class Delivery {
         this.status = DeliveryStatus.WAITING;
     }
 
-    public void updateTrack(Track track) {
+    public void update(DeliveryStatus status, UUID fromHubId, UUID toHubId, String address, UUID recipient, UUID orderId) {
+        this.status = status;
+        this.fromHubId = fromHubId;
+        this.toHubId = toHubId;
+        this.address = address;
+        this.recipient = recipient;
+        this.orderId = orderId;
+    }
+
+    public void deleteTracks(List<UUID> trackIds) {
+        trackIds.forEach(trackId->this.tracks.removeIf(track -> track.getId().equals(trackId)));
+    }
+
+    public void addTrack(Track track) {
         if (this.tracks.stream().anyMatch(t -> t.getSequence() == track.getSequence())) {
             throw new DomainException(ExceptionStatus.TRACK_SEQUENCE_DUPLICATED);
         }
         this.tracks.add(track);
     }
 
-    public void updateTracks(List<Track> tracks) {
+    public void addTracks(List<Track> tracks) {
         Set<Integer> sequences = this.tracks.stream().map(Track::getSequence).collect(Collectors.toSet());
         tracks.forEach(track -> {
             if (sequences.contains(track.getSequence())) {
@@ -81,4 +94,5 @@ public class Delivery {
         });
         this.tracks.addAll(tracks);
     }
+
 }
