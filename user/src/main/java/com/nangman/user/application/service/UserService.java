@@ -14,7 +14,6 @@ import com.nangman.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +38,7 @@ public class UserService {
             throw new CustomException(ExceptionType.DUPLICATE_USER_NAME);
         }
 
-        User savedUser = userRepository.save(User.create(signupRequest, passwordEncoder.encode(signupRequest.password())));
+        User savedUser = userRepository.save(signupRequest.toEntity(passwordEncoder.encode(signupRequest.password())));
         return SignupResponse.from(savedUser);
     }
 
