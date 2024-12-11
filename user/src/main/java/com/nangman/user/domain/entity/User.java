@@ -1,6 +1,5 @@
 package com.nangman.user.domain.entity;
 
-import com.nangman.user.application.dto.request.UserPutRequest;
 import com.nangman.user.application.dto.response.Hub;
 import com.nangman.user.application.dto.response.UserGetResponse;
 import com.nangman.user.common.entity.BaseEntity;
@@ -48,11 +47,11 @@ public class User extends BaseEntity {
         );
     }
 
-    public void update(UserPutRequest userPutRequest, String encodedPassword) {
-        this.username = userPutRequest.username();
+    public void update(String username, String encodedPassword, String name, UserRole role, String slackId) {
+        this.username = username;
         this.password = encodedPassword;
-        this.name = userPutRequest.name();
-        this.role = userPutRequest.role();
-        this.slackId = userPutRequest.slackId();
+        this.name = name;
+        this.role = role;
+        this.slackId = slackId;
     }
 }

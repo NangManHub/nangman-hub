@@ -69,7 +69,13 @@ public class UserService {
         verifyMasterRole(reqUserId);
 
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        user.update(userPutRequest, passwordEncoder.encode(userPutRequest.password()));
+        user.update(
+                userPutRequest.username(),
+                passwordEncoder.encode(userPutRequest.password()),
+                userPutRequest.name(),
+                userPutRequest.role(),
+                userPutRequest.slackId()
+        );
 
         return UserPutResponse.from(user);
     }
