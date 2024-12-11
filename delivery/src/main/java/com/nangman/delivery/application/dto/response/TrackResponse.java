@@ -9,15 +9,15 @@ import lombok.Builder;
 @Builder
 public record TrackResponse(
         UUID deliveryId,
-        int sequence,
+        Integer sequence,
         UUID shipperId,
         UUID fromHubId,
         UUID toHubId,
         String address,
-        int expectDistance,
-        int expectTime,
-        int actualDistance,
-        int actualTime,
+        Integer expectDistance,
+        Integer expectTime,
+        Integer actualDistance,
+        Integer actualTime,
         TrackStatus status,
         Date departureTime
 ) {
