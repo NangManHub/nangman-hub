@@ -3,15 +3,23 @@ package com.nangman.user.application.service;
 import com.nangman.user.application.dto.request.SigninRequest;
 import com.nangman.user.application.dto.request.SignupRequest;
 import com.nangman.user.application.dto.response.SignupResponse;
+import com.nangman.user.application.dto.response.UserGetResponse;
 import com.nangman.user.common.exception.CustomException;
 import com.nangman.user.common.exception.ExceptionType;
 import com.nangman.user.common.util.JwtUtil;
 import com.nangman.user.domain.entity.User;
+import com.nangman.user.domain.entity.UserRole;
+import com.nangman.user.domain.repository.UserQueryRepository;
 import com.nangman.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +29,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+
+    private final UserQueryRepository userQueryRepository;
 
     @Transactional
     public SignupResponse signup(SignupRequest signupRequest) {
@@ -47,4 +57,9 @@ public class UserService {
         // accessToken 반환
         return jwtUtil.createToken(user.getId(), user.getUsername() ,user.getRole());
     }
+
+    public Page<UserGetResponse> search(Pageable pageable, List<UserRole> roles) {
+        return userQueryRepository.searchUser(pageable, roles);
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.nangman.user.domain.entity;
 
 import com.nangman.user.application.dto.request.SignupRequest;
+import com.nangman.user.application.dto.response.Hub;
+import com.nangman.user.application.dto.response.UserGetResponse;
 import com.nangman.user.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,5 +45,16 @@ public class User extends BaseEntity {
                 .role(signupRequest.role())
                 .slackId(signupRequest.slackId())
                 .build();
+    }
+
+    public UserGetResponse toResponseDto() {
+        return UserGetResponse.of(
+                this.id,
+                this.username,
+                this.name,
+                this.role,
+                this.slackId,
+                Hub.of(UUID.randomUUID(), "hub명", "hub주소", 1.0, 1.0)
+        );
     }
 }
