@@ -1,21 +1,17 @@
 package com.nangman.delivery.application.dto.request;
 
 import com.nangman.delivery.domain.entity.Delivery;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
-import lombok.NonNull;
 
 public record DeliveryPostRequest(
-        @NonNull
-        UUID fromHubId,
-        UUID toHubId,
-        String address,
-        @NonNull
-        UUID recipient,
-        @NonNull
-        UUID orderId,
-        @NonNull
-        List<TrackPostRequest> tracks
+        @NotNull UUID fromHubId,
+        @NotNull UUID toHubId,
+        @NotNull String address,
+        @NotNull UUID recipient,
+        @NotNull UUID orderId,
+        @NotNull List<TrackPostRequest> tracks
 ) {
 
     public Delivery toEntity() {
