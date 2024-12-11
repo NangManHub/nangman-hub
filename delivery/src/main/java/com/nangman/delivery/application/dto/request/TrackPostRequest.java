@@ -6,15 +6,13 @@ import java.util.UUID;
 import lombok.NonNull;
 
 public record TrackPostRequest(
-        int sequence,
-        @NonNull
-        UUID shipperId,
-        @NonNull
-        UUID fromHubId,
+        @NonNull Integer sequence,
+        @NonNull UUID shipperId,
+        @NonNull UUID fromHubId,
         UUID toHubId,
         String address,
-        int expectDistance,
-        int expectTime
+        @NonNull Integer expectDistance,
+        @NonNull Integer expectTime
 ) {
     public Track toEntity(Delivery delivery) {
         return Track.builder()
