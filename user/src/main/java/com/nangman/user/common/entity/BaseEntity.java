@@ -32,11 +32,11 @@ public abstract class BaseEntity {
     // 생성자
     @CreatedBy
     @Column(updatable = false)
-    private Long createdBy;
+    private UUID createdBy;
 
     // 수정자
     @LastModifiedBy
-    private Long updatedBy;
+    private UUID updatedBy;
 
     // 삭제자
     private UUID deletedBy;
