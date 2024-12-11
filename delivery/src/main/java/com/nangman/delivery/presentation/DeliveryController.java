@@ -4,6 +4,7 @@ import com.nangman.delivery.application.dto.request.DeliveryPostRequest;
 import com.nangman.delivery.application.dto.request.DeliveryPutRequest;
 import com.nangman.delivery.application.dto.response.DeliveryResponse;
 import com.nangman.delivery.application.service.DeliveryService;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class DeliveryController {
 
     @PutMapping("/{deliveryId}")
     public ResponseEntity<DeliveryResponse> updateDelivery(@PathVariable UUID deliveryId,
-                                                           @RequestBody DeliveryPutRequest request) {
+                                                           @Valid @RequestBody DeliveryPutRequest request) {
         DeliveryResponse response = deliveryService.updateDelivery(deliveryId, request);
 
         return ResponseEntity.ok(response);

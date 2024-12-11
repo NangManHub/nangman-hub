@@ -4,6 +4,7 @@ import com.nangman.delivery.application.dto.request.TrackCompletionPatchRequest;
 import com.nangman.delivery.application.dto.request.TrackPutRequest;
 import com.nangman.delivery.application.dto.response.TrackResponse;
 import com.nangman.delivery.application.service.TrackService;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,8 @@ public class TrackController {
     private final TrackService trackService;
 
     @PutMapping("/{trackId}")
-    public ResponseEntity<TrackResponse> updateTrack(@PathVariable UUID trackId, @RequestBody TrackPutRequest request) {
+    public ResponseEntity<TrackResponse> updateTrack(@PathVariable UUID trackId,
+                                                     @Valid @RequestBody TrackPutRequest request) {
         TrackResponse trackResponse = trackService.updateTrack(trackId, request);
 
         return ResponseEntity.ok(trackResponse);
@@ -29,7 +31,7 @@ public class TrackController {
 
     @PatchMapping("/{trackId}/completion")
     public ResponseEntity<TrackResponse> completeTrack(@PathVariable UUID trackId,
-                                                       @RequestBody TrackCompletionPatchRequest request) {
+                                                       @Valid @RequestBody TrackCompletionPatchRequest request) {
         TrackResponse trackResponse = trackService.completeTrack(trackId, request);
 
         return ResponseEntity.ok(trackResponse);

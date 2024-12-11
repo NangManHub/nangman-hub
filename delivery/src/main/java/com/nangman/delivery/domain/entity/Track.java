@@ -48,16 +48,16 @@ public class Track extends BaseEntity {
     @Column(name = "address", length = 50)
     private String address;
 
-    @Column(name = "expectDistance", updatable = false, nullable = false)
+    @Column(name = "expect_distance", updatable = false, nullable = false)
     private Integer expectDistance;
 
-    @Column(name = "expectTime", updatable = false, nullable = false)
+    @Column(name = "expect_time", updatable = false, nullable = false)
     private Integer expectTime;
 
-    @Column(name = "actualDistance")
+    @Column(name = "actual_distance")
     private Integer actualDistance;
 
-    @Column(name = "actualTime")
+    @Column(name = "actual_time")
     private Integer actualTime;
 
     @Column(name = "status", nullable = false)
