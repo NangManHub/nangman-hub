@@ -1,4 +1,4 @@
-package com.nangman.company.presentation;
+package com.nangman.company.domain.repository;
 
 import com.nangman.company.common.exception.CompanyNotFoundException;
 import com.nangman.company.domain.entity.Company;
