@@ -2,11 +2,16 @@ package com.nangman.delivery.presentation;
 
 import com.nangman.delivery.application.dto.request.DeliveryPostRequest;
 import com.nangman.delivery.application.dto.request.DeliveryPutRequest;
+import com.nangman.delivery.application.dto.request.DeliverySearchRequest;
 import com.nangman.delivery.application.dto.response.DeliveryResponse;
 import com.nangman.delivery.application.service.DeliveryService;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +36,14 @@ public class DeliveryController {
         DeliveryResponse response = deliveryService.createDelivery(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<PagedModel<DeliveryResponse>> searchDelivery(DeliverySearchRequest deliverySearchRequest,
+                                                                      @PageableDefault Pageable pageable) {
+        Page<DeliveryResponse> response = deliveryService.searchDelivery(deliverySearchRequest, pageable);
+
+        return ResponseEntity.ok(new PagedModel<>(response));
     }
 
     @GetMapping("/{deliveryId}")
