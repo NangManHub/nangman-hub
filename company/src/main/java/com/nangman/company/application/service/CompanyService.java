@@ -77,6 +77,21 @@ public class CompanyService {
         return CompanyPutResponse.from(company);
     }
 
+    @Transactional
+    public void deleteCompany(UUID companyId) {
+        Company company = companyRepository.getById(companyId);
+        // TODO: MANAGER는 담당 HUB의 업체만 삭제 가능 -> HubClient
+        if (getUserRoleFromAuthentication() == UserRole.MANAGER) {
+            // UUID hubId = hubClient.getHubByManagerId(managerId);
+            UUID hubId = UUID.randomUUID();
+            if(!company.getHubId().equals(hubId)) {
+                throw new HubNotMatchedException();
+            }
+        }
+
+        company.updateIsDeleted(getUserIdFromAuthentication());
+    }
+
     private UUID getUserIdFromAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getAuthorities().isEmpty()) {
