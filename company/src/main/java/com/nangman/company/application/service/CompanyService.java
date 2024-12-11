@@ -1,5 +1,6 @@
 package com.nangman.company.application.service;
 
+import com.nangman.company.application.dto.CompanyDto;
 import com.nangman.company.application.dto.HubDto;
 import com.nangman.company.application.dto.UserDto;
 import com.nangman.company.application.dto.request.CompanyPostRequest;
@@ -7,15 +8,22 @@ import com.nangman.company.application.dto.request.CompanyPutRequest;
 import com.nangman.company.application.dto.response.CompanyGetResponse;
 import com.nangman.company.application.dto.response.CompanyPostResponse;
 import com.nangman.company.application.dto.response.CompanyPutResponse;
+import com.nangman.company.application.dto.response.CompanySearchGetResponse;
 import com.nangman.company.common.exception.AgentMismatchException;
 import com.nangman.company.common.exception.HubNotMatchedException;
 import com.nangman.company.domain.entity.Company;
+import com.nangman.company.domain.enums.CompanyType;
 import com.nangman.company.domain.enums.UserRole;
-import com.nangman.company.presentation.CompanyRepository;
+import com.nangman.company.domain.repository.CompanyQueryRepository;
+import com.nangman.company.domain.repository.CompanyRepository;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CompanyService {
     private final CompanyRepository companyRepository;
+    private final CompanyQueryRepository companyQueryRepository;
 
     public CompanyPostResponse createCompany(CompanyPostRequest request) {
         // TODO: UserRole이 MANAGER면 request hub ID와 담당자의 hub ID가 같은 지 확인
@@ -90,6 +99,11 @@ public class CompanyService {
         }
 
         company.updateIsDeleted(getUserIdFromAuthentication());
+    }
+
+    public CompanySearchGetResponse searchCompany(String name, UUID hubId, UUID agentId, CompanyType type, String address, Pageable pageable) {
+        Page<CompanyDto> companySearchList = companyQueryRepository.searchCompany(name, hubId, agentId, type, address, pageable);
+        return CompanySearchGetResponse.from(companySearchList);
     }
 
     private UUID getUserIdFromAuthentication() {
