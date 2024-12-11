@@ -27,6 +27,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.search(pageable, roles));
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUser(@RequestHeader("X-User-Id") UUID reqUserId, @PathVariable(name = "userId") UUID userId) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(reqUserId, userId));
+    }
+
     @PutMapping("/{userId}")
     public ResponseEntity<?> updateUser(@RequestHeader("X-User-Id") UUID reqUserId, @PathVariable(name = "userId") UUID userId, @RequestBody UserPutRequest userPutRequest){
 

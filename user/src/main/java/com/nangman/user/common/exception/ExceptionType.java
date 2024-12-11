@@ -11,7 +11,8 @@ public enum ExceptionType {
     PASSWORD_NOT_MATCHED(HttpStatus.BAD_REQUEST, "U-003", "일치하지 않는 비밀번호 입니다."),
     WITHDRAWN_USER_ACCOUNT(HttpStatus.BAD_REQUEST, "U-004", "이미 탈퇴한 회원입니다."),
     MASTER_ROLE_REQUIRED(HttpStatus.FORBIDDEN, "U-005", "마스터 권한이 필요합니다."),
-    MASTER_NOT_FOUND(HttpStatus.BAD_REQUEST, "U-006", "요청하신 마스터 권한 유저를 찾을 수 없습니다.");
+    MASTER_NOT_FOUND(HttpStatus.BAD_REQUEST, "U-006", "요청하신 마스터 권한 유저를 찾을 수 없습니다."),
+    USER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "U-007", "해당 자원에 대한 권한이 없습니다.");
 
     // 상태, 에러 코드, 메시지
     private final HttpStatus httpStatus;
