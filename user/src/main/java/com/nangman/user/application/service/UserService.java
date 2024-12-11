@@ -2,8 +2,10 @@ package com.nangman.user.application.service;
 
 import com.nangman.user.application.dto.request.SigninRequest;
 import com.nangman.user.application.dto.request.SignupRequest;
+import com.nangman.user.application.dto.request.UserPutRequest;
 import com.nangman.user.application.dto.response.SignupResponse;
 import com.nangman.user.application.dto.response.UserGetResponse;
+import com.nangman.user.application.dto.response.UserPutResponse;
 import com.nangman.user.common.exception.CustomException;
 import com.nangman.user.common.exception.ExceptionType;
 import com.nangman.user.common.util.JwtUtil;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -61,4 +64,18 @@ public class UserService {
         return userQueryRepository.searchUser(pageable, roles);
     }
 
+    @Transactional
+    public UserPutResponse updateUser(UUID reqUserId, UUID userId, UserPutRequest userPutRequest) {
+        verifyMasterRole(reqUserId);
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        user.update(userPutRequest, passwordEncoder.encode(userPutRequest.password()));
+
+        return UserPutResponse.from(user);
+    }
+
+    public void verifyMasterRole(UUID reqUserId){
+        User user = userRepository.findById(reqUserId).orElseThrow(() -> new CustomException(ExceptionType.MASTER_NOT_FOUND));
+        if(user.getRole() != UserRole.MASTER) throw new CustomException(ExceptionType.MASTER_ROLE_REQUIRED);
+    }
 }
