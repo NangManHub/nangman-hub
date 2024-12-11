@@ -11,6 +11,7 @@ import com.nangman.company.application.dto.response.CompanyPutResponse;
 import com.nangman.company.application.dto.response.CompanySearchGetResponse;
 import com.nangman.company.common.exception.AgentMismatchException;
 import com.nangman.company.common.exception.HubNotMatchedException;
+import com.nangman.company.common.util.AuthorizationUtils;
 import com.nangman.company.domain.entity.Company;
 import com.nangman.company.domain.enums.CompanyType;
 import com.nangman.company.domain.enums.UserRole;
@@ -35,17 +36,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyQueryRepository companyQueryRepository;
-
+    private final AuthorizationUtils authorizationUtils;
     public CompanyPostResponse createCompany(CompanyPostRequest request) {
-        // TODO: UserRole이 MANAGER면 request hub ID와 담당자의 hub ID가 같은 지 확인
-        if (getUserRoleFromAuthentication() == UserRole.MANAGER) {
-            // UUID hubId = hubClient.getHubByManagerId(managerId);
-            UUID hubId = UUID.randomUUID();
-            if (!request.hubId().equals(hubId)) {
-                throw new HubNotMatchedException();
-            }
-        }
-
+        authorizationUtils.validateHubManager(request.hubId());
         Company company = companyRepository.save(request.toEntity());
         return CompanyPostResponse.from(company);
     }
