@@ -26,7 +26,7 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
 
     @PostMapping
-    public ResponseEntity<DeliveryResponse> createDelivery(@RequestBody DeliveryPostRequest request) {
+    public ResponseEntity<DeliveryResponse> createDelivery(@Valid @RequestBody DeliveryPostRequest request) {
         DeliveryResponse response = deliveryService.createDelivery(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

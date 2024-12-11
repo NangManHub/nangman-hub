@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "p_track")
+@Table(name = "p_tracks")
 @NoArgsConstructor
 public class Track extends BaseEntity {
 
