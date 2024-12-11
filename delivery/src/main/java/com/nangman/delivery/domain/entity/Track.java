@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "p_track")
 @NoArgsConstructor
-public class Track {
+public class Track extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

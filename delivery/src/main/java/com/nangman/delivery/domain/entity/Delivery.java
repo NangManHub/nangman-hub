@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "p_delivery")
 @NoArgsConstructor
-public class Delivery {
+public class Delivery extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -94,5 +94,4 @@ public class Delivery {
         });
         this.tracks.addAll(tracks);
     }
-
 }
