@@ -50,7 +50,7 @@ public class LocalJwtAuthenticationFilter implements GlobalFilter {
         ServerHttpRequest build = exchange.getRequest().mutate()
                 .header("X-User-Id", payload.getSubject())
                 .header("X-Username", payload.get("username").toString())
-                .header("X-Role", payload.get("role").toString())
+                .header("X-User-Role", payload.get("role").toString())
                 .build();
 
         ServerWebExchange mutatedExchange = exchange.mutate().request(build).build();
