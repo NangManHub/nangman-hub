@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "p_delivery")
+@Table(name = "p_deliveries")
 @NoArgsConstructor
 public class Delivery extends BaseEntity {
 
