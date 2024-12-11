@@ -56,3 +56,5 @@ eureka:
 service:
   jwt:
     secret-key: ${JWT_SECRET_KEY}
+  gateway:
+    secret-key: ${GATEWAY_SECRET_KEY}

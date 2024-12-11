@@ -22,6 +22,9 @@ public class LocalJwtAuthenticationFilter implements GlobalFilter {
     @Value("${service.jwt.secret-key}")
     private String secretKey;
 
+    @Value("${service.gateway.secret-key}")
+    private String gatewayKey;
+
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
 
@@ -51,6 +54,7 @@ public class LocalJwtAuthenticationFilter implements GlobalFilter {
                 .header("X-User-Id", payload.getSubject())
                 .header("X-Username", payload.get("username").toString())
                 .header("X-User-Role", payload.get("role").toString())
+                .header("X-Gateway-Key", gatewayKey)
                 .build();
 
         ServerWebExchange mutatedExchange = exchange.mutate().request(build).build();
