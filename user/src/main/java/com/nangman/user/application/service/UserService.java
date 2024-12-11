@@ -39,9 +39,7 @@ public class UserService {
     @Transactional
     public SignupResponse signup(SignupRequest signupRequest) {
 
-        if (userRepository.findByUsername(signupRequest.username()).isPresent()) {
-            throw new CustomException(ExceptionType.DUPLICATE_USER_NAME);
-        }
+        checkDuplicateUsername(signupRequest.username());
 
         User savedUser = userRepository.save(signupRequest.toEntity(passwordEncoder.encode(signupRequest.password())));
         return SignupResponse.from(savedUser);
@@ -79,6 +77,7 @@ public class UserService {
     @Transactional
     public UserPutResponse updateUser(UUID reqUserId, UUID userId, UserPutRequest userPutRequest) {
         verifyMasterRole(reqUserId);
+        checkDuplicateUsername(userPutRequest.username());
 
         User user = userRepository.findUser(userId);
         user.update(
@@ -104,5 +103,10 @@ public class UserService {
     public void verifyMasterRole(UUID reqUserId){
         User user = userRepository.findByIdAndIsDeletedFalse(reqUserId).orElseThrow(() -> new CustomException(ExceptionType.MASTER_NOT_FOUND));
         if(user.getRole() != UserRole.MASTER) throw new CustomException(ExceptionType.MASTER_ROLE_REQUIRED);
+    }
+
+    public void checkDuplicateUsername(String username){
+        if (userRepository.findByUsername(username).isPresent()) throw new CustomException(ExceptionType.DUPLICATE_USER_NAME);
+
     }
 }
