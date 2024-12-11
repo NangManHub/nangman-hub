@@ -68,7 +68,7 @@ public class UserService {
     public UserPutResponse updateUser(UUID reqUserId, UUID userId, UserPutRequest userPutRequest) {
         verifyMasterRole(reqUserId);
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        User user = userRepository.findUser(userId);
         user.update(
                 userPutRequest.username(),
                 passwordEncoder.encode(userPutRequest.password()),
@@ -81,7 +81,7 @@ public class UserService {
     }
 
     public void verifyMasterRole(UUID reqUserId){
-        User user = userRepository.findById(reqUserId).orElseThrow(() -> new CustomException(ExceptionType.MASTER_NOT_FOUND));
+        User user = userRepository.findByIdAndIsDeletedFalse(reqUserId).orElseThrow(() -> new CustomException(ExceptionType.MASTER_NOT_FOUND));
         if(user.getRole() != UserRole.MASTER) throw new CustomException(ExceptionType.MASTER_ROLE_REQUIRED);
     }
 }
