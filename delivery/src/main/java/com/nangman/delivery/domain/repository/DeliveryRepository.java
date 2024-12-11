@@ -7,8 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-public interface DeliveryRepository extends JpaRepository<Delivery, UUID> {
+public interface DeliveryRepository extends JpaRepository<Delivery, UUID>, QuerydslPredicateExecutor<Delivery> {
 
     @NonNull
     default Delivery getById(@NonNull UUID deliveryId) {
