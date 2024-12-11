@@ -5,12 +5,17 @@ import com.nangman.company.application.dto.request.CompanyPutRequest;
 import com.nangman.company.application.dto.response.CompanyGetResponse;
 import com.nangman.company.application.dto.response.CompanyPostResponse;
 import com.nangman.company.application.dto.response.CompanyPutResponse;
+import com.nangman.company.application.dto.response.CompanySearchGetResponse;
 import com.nangman.company.application.service.CompanyService;
 import com.nangman.company.common.interceptor.Auth;
+import com.nangman.company.domain.enums.CompanyType;
 import com.nangman.company.domain.enums.UserRole;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -51,6 +57,18 @@ public class CompanyController {
     public ResponseEntity<Void> deleteCompany(@PathVariable UUID companyId) {
         companyService.deleteCompany(companyId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<CompanySearchGetResponse> searchCompany(@RequestParam(required = false) String name,
+                                                                  @RequestParam(required = false) UUID hubId,
+                                                                  @RequestParam(required = false) UUID agentId,
+                                                                  @RequestParam(required = false) CompanyType type,
+                                                                  @RequestParam(required = false) String address,
+                                                                  @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+
+    ) {
+        return ResponseEntity.ok(companyService.searchCompany(name, hubId, agentId, type, address, pageable));
     }
 
 }
