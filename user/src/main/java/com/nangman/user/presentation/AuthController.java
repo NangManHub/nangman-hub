@@ -25,20 +25,11 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest){
 
-        log.info("username : {}", signupRequest.username());
-        log.info("password : {}", signupRequest.password());
-        log.info("name : {}", signupRequest.name());
-        log.info("role : {}", signupRequest.role());
-        log.info("slackId : {}", signupRequest.slackId());
-
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.signup(signupRequest));
     }
 
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest, HttpServletResponse response) {
-
-        log.info(signinRequest.username());
-        log.info(signinRequest.password());
 
         String accessToken = userService.signin(signinRequest);
 
