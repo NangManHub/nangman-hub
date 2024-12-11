@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
 import lombok.Builder;
@@ -75,5 +76,31 @@ public class Track extends BaseEntity {
         this.expectDistance = expectDistance;
         this.expectTime = expectTime;
         this.status = TrackStatus.WAITING;
+    }
+
+    public void update(Integer sequence, UUID shipperId, UUID fromHubId, UUID toHubId, String address, Integer expectDistance,
+                       Integer expectTime, Integer actualDistance, Integer actualTime, TrackStatus status, Date departureTime) {
+        this.sequence = sequence;
+        this.shipperId = shipperId;
+        this.fromHubId = fromHubId;
+        this.toHubId = toHubId;
+        this.address = address;
+        this.expectDistance = expectDistance;
+        this.expectTime = expectTime;
+        this.actualDistance = actualDistance;
+        this.actualTime = actualTime;
+        this.status = status;
+        this.departureTime = departureTime;
+    }
+
+    public void departureTrack() {
+        this.status = TrackStatus.MOVING;
+        this.departureTime = new Date();
+    }
+
+    public void complete(Integer actualDistance) {
+        this.actualDistance = actualDistance;
+        this.actualTime = (int) Duration.between(departureTime.toInstant(), new Date().toInstant()).toMinutes();
+        this.status = TrackStatus.ARRIVE;
     }
 }
