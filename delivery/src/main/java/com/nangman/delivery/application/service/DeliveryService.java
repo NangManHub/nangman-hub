@@ -7,7 +7,9 @@ import com.nangman.delivery.application.dto.response.DeliveryResponse;
 import com.nangman.delivery.domain.entity.Delivery;
 import com.nangman.delivery.domain.entity.QDelivery;
 import com.nangman.delivery.domain.repository.DeliveryRepository;
-import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,28 +36,19 @@ public class DeliveryService {
 
     @Transactional(readOnly = true)
     public Page<DeliveryResponse> searchDelivery(DeliverySearchRequest searchRequest, Pageable pageable) {
+        QDelivery delivery = QDelivery.delivery;
 
-        BooleanBuilder qBuilder = new BooleanBuilder();
-        qBuilder.and(QDelivery.delivery.isDelete.isFalse());
-        if (searchRequest.status() != null) {
-            qBuilder.and(QDelivery.delivery.status.eq(searchRequest.status()));
-        }
-        if (searchRequest.fromHubId() != null) {
-            qBuilder.and(QDelivery.delivery.fromHubId.eq(searchRequest.fromHubId()));
-        }
-        if (searchRequest.toHubId() != null) {
-            qBuilder.and(QDelivery.delivery.toHubId.eq(searchRequest.toHubId()));
-        }
-        if (searchRequest.address() != null) {
-            qBuilder.and(QDelivery.delivery.address.contains(searchRequest.address()));
-        }
-        if (searchRequest.recipient() != null) {
-            qBuilder.and(QDelivery.delivery.recipient.eq(searchRequest.recipient()));
-        }
-        if (searchRequest.orderId() != null) {
-            qBuilder.and(QDelivery.delivery.orderId.eq(searchRequest.orderId()));
-        }
-        return deliveryRepository.findAll(qBuilder, pageable).map(DeliveryResponse::from);
+        Predicate predicate = ExpressionUtils.allOf(
+                delivery.isDelete.isFalse(),
+                searchRequest.status() != null ? delivery.status.eq(searchRequest.status()) : null,
+                searchRequest.fromHubId() != null ? delivery.fromHubId.eq(searchRequest.fromHubId()) : null,
+                searchRequest.toHubId() != null ? delivery.toHubId.eq(searchRequest.toHubId()) : null,
+                searchRequest.address() != null ? delivery.address.contains(searchRequest.address()) : null,
+                searchRequest.recipient() != null ? delivery.recipient.eq(searchRequest.recipient()) : null,
+                searchRequest.orderId() != null ? delivery.orderId.eq(searchRequest.orderId()) : null
+        );
+
+        return deliveryRepository.findAll(Objects.requireNonNull(predicate), pageable).map(DeliveryResponse::from);
     }
 
     @Transactional
