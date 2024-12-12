@@ -43,7 +43,6 @@ public class BaseTimeEntity {
 
     public void updateIsDeleted(UUID userId) {
         this.isDelete = true;
-        this.modifiedBy = userId;
         this.deletedAt = LocalDateTime.now();
         this.deletedBy = userId;
     }

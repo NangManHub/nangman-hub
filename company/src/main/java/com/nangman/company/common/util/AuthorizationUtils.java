@@ -37,7 +37,7 @@ public class AuthorizationUtils {
         }
     }
 
-    private UUID getUserIdFromAuthentication() {
+    public UUID getUserIdFromAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getAuthorities().isEmpty()) {
             return null;
