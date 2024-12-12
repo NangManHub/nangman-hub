@@ -34,11 +34,9 @@ public class Product extends BaseTimeEntity {
     private UUID companyId;
 
     @Column(nullable = false)
-    @Size(min = 1, max = 20)
     private String name;
 
     @Column(nullable = false)
-    @Min(0)
     private Integer quantity;
 
     public void updateAll(UUID hubId, UUID companyId, String name, Integer quantity) {
