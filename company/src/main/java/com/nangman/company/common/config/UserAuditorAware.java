@@ -17,7 +17,6 @@ public class UserAuditorAware implements AuditorAware<UUID> {
 
     @Override
     public Optional<UUID> getCurrentAuditor() {
-        // TODO: 추후 인가 로직 변경에 따른 수정 필요
         String userIdHeader = request.getHeader("X-User-Id");
         if (userIdHeader != null) {
             try {
