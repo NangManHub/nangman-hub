@@ -1,4 +1,4 @@
-package com.nangman.delivery.domain.entity;
+package com.nangman.delivery.domain.enums;
 
 public enum DeliveryStatus {
     WAITING,
