@@ -1,7 +1,7 @@
 package com.nangman.delivery.application.dto.response;
 
 import com.nangman.delivery.domain.entity.Track;
-import com.nangman.delivery.domain.entity.TrackStatus;
+import com.nangman.delivery.domain.enums.TrackStatus;
 import java.util.Date;
 import java.util.UUID;
 import lombok.Builder;

@@ -4,8 +4,10 @@ import com.nangman.delivery.application.dto.request.DeliveryPostRequest;
 import com.nangman.delivery.application.dto.request.DeliveryPutRequest;
 import com.nangman.delivery.application.dto.request.DeliverySearchRequest;
 import com.nangman.delivery.application.dto.response.DeliveryResponse;
+import com.nangman.delivery.common.util.AuthorizationUtils;
 import com.nangman.delivery.domain.entity.Delivery;
 import com.nangman.delivery.domain.entity.QDelivery;
+import com.nangman.delivery.domain.enums.UserRole;
 import com.nangman.delivery.domain.repository.DeliveryRepository;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
+    private final AuthorizationUtils authorizationUtils;
 
     @Transactional
     public DeliveryResponse createDelivery(DeliveryPostRequest request) {
@@ -29,6 +32,9 @@ public class DeliveryService {
 
     @Transactional(readOnly = true)
     public DeliveryResponse getDeliveryById(UUID deliveryId) {
+        authorizationUtils.validateDeliveryHubManager(deliveryId);
+        authorizationUtils.validateDeliveryShipper(deliveryId);
+
         Delivery delivery = deliveryRepository.getById(deliveryId);
 
         return DeliveryResponse.from(delivery);
@@ -36,10 +42,13 @@ public class DeliveryService {
 
     @Transactional(readOnly = true)
     public Page<DeliveryResponse> searchDelivery(DeliverySearchRequest searchRequest, Pageable pageable) {
+        Predicate managerAndShipperExpression = getManagerAndShipperPredicate();
+
         QDelivery delivery = QDelivery.delivery;
 
         Predicate predicate = ExpressionUtils.allOf(
                 delivery.isDelete.isFalse(),
+                managerAndShipperExpression,
                 searchRequest.status() != null ? delivery.status.eq(searchRequest.status()) : null,
                 searchRequest.fromHubId() != null ? delivery.fromHubId.eq(searchRequest.fromHubId()) : null,
                 searchRequest.toHubId() != null ? delivery.toHubId.eq(searchRequest.toHubId()) : null,
@@ -53,6 +62,8 @@ public class DeliveryService {
 
     @Transactional
     public DeliveryResponse updateDelivery(UUID deliveryId, DeliveryPutRequest request) {
+        authorizationUtils.validateDeliveryHubManager(deliveryId);
+        authorizationUtils.validateDeliveryShipper(deliveryId);
         Delivery delivery = deliveryRepository.getById(deliveryId);
 
         delivery.update(request.status(), request.fromHubId(), request.toHubId(), request.address(),
@@ -63,9 +74,22 @@ public class DeliveryService {
 
     @Transactional
     public void deleteDeliveryById(UUID deliveryId, UUID userId) {
+        authorizationUtils.validateDeliveryHubManager(deliveryId);
         Delivery delivery = deliveryRepository.getById(deliveryId);
 
         delivery.delete(userId);
     }
 
+    private Predicate getManagerAndShipperPredicate() {
+        UserRole userRole = authorizationUtils.getUserRoleFromHeader();
+        UUID userId = authorizationUtils.getUserIdFromHeader();
+
+//        if (userRole == UserRole.MANAGER) {
+//            UUID hubId = hubClient.getHubIdByManagerId(userId);
+//            return QDelivery.delivery.toHubId.eq(hubId).or(QDelivery.delivery.fromHubId.eq(hubId));
+//        } else if (userRole == UserRole.SHIPPER) {
+//            return QDelivery.delivery.track.shipperId.eq(userId);
+//        }
+        return null;
+    }
 }

@@ -4,8 +4,10 @@ import com.nangman.delivery.application.dto.request.TrackCompletionPatchRequest;
 import com.nangman.delivery.application.dto.request.TrackPutRequest;
 import com.nangman.delivery.application.dto.request.TrackSearchRequest;
 import com.nangman.delivery.application.dto.response.TrackResponse;
+import com.nangman.delivery.common.util.AuthorizationUtils;
 import com.nangman.delivery.domain.entity.QTrack;
 import com.nangman.delivery.domain.entity.Track;
+import com.nangman.delivery.domain.enums.UserRole;
 import com.nangman.delivery.domain.repository.TrackRepository;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
@@ -21,9 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TrackService {
     private final TrackRepository trackRepository;
+    private final AuthorizationUtils authorizationUtils;
 
     @Transactional
     public TrackResponse updateTrack(UUID trackId, TrackPutRequest request) {
+        authorizationUtils.validateTrackHubManager(trackId);
+        authorizationUtils.validateTrackShipper(trackId);
         Track track = trackRepository.getById(trackId);
 
         track.update(request.sequence(), request.shipperId(), request.fromHubId(), request.toHubId(), request.address(),
@@ -35,6 +40,9 @@ public class TrackService {
 
     @Transactional
     public TrackResponse completeTrack(UUID trackId, TrackCompletionPatchRequest request) {
+        authorizationUtils.validateTrackHubManager(trackId);
+        authorizationUtils.validateTrackShipper(trackId);
+
         Track track = trackRepository.getById(trackId);
 
         track.complete(request.actualDistance());
@@ -44,6 +52,9 @@ public class TrackService {
 
     @Transactional
     public TrackResponse departureTrack(UUID trackId) {
+        authorizationUtils.validateTrackHubManager(trackId);
+        authorizationUtils.validateTrackShipper(trackId);
+
         Track track = trackRepository.getById(trackId);
 
         track.departureTrack();
@@ -52,10 +63,13 @@ public class TrackService {
     }
 
     public Page<TrackResponse> searchTrack(TrackSearchRequest searchRequest, Pageable pageable) {
+        Predicate managerAndShipperExpression = getManagerAndShipperPredicate();
+
         QTrack track = QTrack.track;
 
         Predicate predicate = ExpressionUtils.allOf(
                 track.isDelete.isFalse(),
+                managerAndShipperExpression,
                 searchRequest.deliveryId() != null ? track.delivery.id.eq(searchRequest.deliveryId()) : null,
                 searchRequest.sequence() != null ? track.sequence.eq(searchRequest.sequence()) : null,
                 searchRequest.shipperId() != null ? track.shipperId.eq(searchRequest.shipperId()) : null,
@@ -71,5 +85,19 @@ public class TrackService {
         );
 
         return trackRepository.findAll(Objects.requireNonNull(predicate), pageable).map(TrackResponse::from);
+    }
+
+
+    private Predicate getManagerAndShipperPredicate() {
+        UserRole userRole = authorizationUtils.getUserRoleFromHeader();
+        UUID userId = authorizationUtils.getUserIdFromHeader();
+
+//        if (userRole == UserRole.MANAGER) {
+//            UUID hubId = hubClient.getHubIdByManagerId(userId);
+//            return Qtrack.track.toHubId.eq(hubId).or(Qtrack.track.fromHubId.eq(hubId));
+//        } else if (userRole == UserRole.SHIPPER) {
+//            return Qtrack.track.shipperId.eq(userId);
+//        }
+        return null;
     }
 }
