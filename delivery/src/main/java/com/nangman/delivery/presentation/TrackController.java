@@ -2,12 +2,18 @@ package com.nangman.delivery.presentation;
 
 import com.nangman.delivery.application.dto.request.TrackCompletionPatchRequest;
 import com.nangman.delivery.application.dto.request.TrackPutRequest;
+import com.nangman.delivery.application.dto.request.TrackSearchRequest;
 import com.nangman.delivery.application.dto.response.TrackResponse;
 import com.nangman.delivery.application.service.TrackService;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -44,4 +50,10 @@ public class TrackController {
         return ResponseEntity.ok(trackResponse);
     }
 
+    @GetMapping
+    public ResponseEntity<PagedModel<TrackResponse>> searchTrack(TrackSearchRequest searchRequest, @PageableDefault Pageable pageable) {
+        Page<TrackResponse> trackResponses = trackService.searchTrack(searchRequest, pageable);
+
+        return ResponseEntity.ok(new PagedModel<>(trackResponses));
+    }
 }
