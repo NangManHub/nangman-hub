@@ -1,6 +1,7 @@
 package com.nangman.company.domain.repository;
 
 import com.nangman.company.common.exception.AgentMismatchException;
+import com.nangman.company.common.exception.CompanyNotFoundByManagerException;
 import com.nangman.company.common.exception.CompanyNotFoundException;
 import com.nangman.company.domain.entity.Company;
 import java.util.Optional;
@@ -17,6 +18,6 @@ public interface CompanyRepository extends JpaRepository<Company, UUID> {
     }
 
     default Company getByAgentId(UUID agentId) {
-        return findByAgentIdAndIsDeleteFalse(agentId).orElseThrow(CompanyNotFoundException::new);
+        return findByAgentIdAndIsDeleteFalse(agentId).orElseThrow(CompanyNotFoundByManagerException::new);
     };
 }
