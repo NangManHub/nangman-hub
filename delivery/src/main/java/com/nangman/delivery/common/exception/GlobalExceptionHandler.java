@@ -21,6 +21,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(e.getStatus()).body(e.getMessage());
     }
 
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<?> handleAspectException(AuthException e) {
+        log.error("Aspect Exception: {}", e.getMessage());
+        return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+    }
+
     @ExceptionHandler(DefaultException.class)
     public ResponseEntity<?> handleDefaultException(DefaultException e) {
         log.error("Default Exception: {}", e.getMessage());
