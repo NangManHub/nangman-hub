@@ -31,7 +31,8 @@ public class UserQueryRepository {
         List<User> content = queryFactory
                 .selectFrom(user)
                 .where(
-                        userRoleContains(roles)
+                        userRoleContains(roles),
+                        user.isDeleted.isFalse()
                 )
                 .orderBy(orders.toArray(new OrderSpecifier[0]))
                 .offset(pageable.getOffset())
