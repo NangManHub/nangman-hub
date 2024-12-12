@@ -22,9 +22,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<?> searchUser(Pageable pageable, @RequestParam(required = false) List<UserRole> roles) {
+    public ResponseEntity<?> searchUser(@RequestHeader("X-User-Id") UUID reqUserId,Pageable pageable, @RequestParam(required = false) List<UserRole> roles) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(userService.search(pageable, roles));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.search(reqUserId, pageable, roles));
     }
 
     @GetMapping("/{userId}")

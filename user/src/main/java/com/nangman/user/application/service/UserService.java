@@ -60,7 +60,9 @@ public class UserService {
         return jwtUtil.createToken(user.getId(), user.getUsername() ,user.getRole());
     }
 
-    public Page<UserGetResponse> search(Pageable pageable, List<UserRole> roles) {
+    public Page<UserGetResponse> search(UUID reqUserId, Pageable pageable, List<UserRole> roles) {
+        verifyMasterRole(reqUserId);
+
         return userQueryRepository.searchUser(pageable, roles);
     }
 
