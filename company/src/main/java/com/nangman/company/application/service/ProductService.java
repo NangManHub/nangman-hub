@@ -31,4 +31,13 @@ public class ProductService {
         Product product = productRepository.getById(productId);
         return ProductGetResponse.from(product);
     }
+
+    @Transactional
+    public ProductGetResponse modifyProduct(UUID productId, ProductPostRequest request) {
+        Product product = productRepository.getById(productId);
+        authorizationUtils.validateHubManager(request.hubId());
+        authorizationUtils.validateCompanyAgent(request.companyId());
+        product.updateAll(request.hubId(), request.companyId(), request.name(), request.quantity());
+        return ProductGetResponse.from(product);
+    }
 }
