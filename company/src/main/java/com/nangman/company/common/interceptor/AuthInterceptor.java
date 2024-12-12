@@ -1,5 +1,6 @@
 package com.nangman.company.common.interceptor;
 
+import com.nangman.company.common.exception.HeaderMissingException;
 import com.nangman.company.domain.enums.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,21 +27,16 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         HandlerMethod method = (HandlerMethod) handler;
         Auth auth = method.getMethodAnnotation(Auth.class);
-        if (auth == null) {
-            return true;
-        }
 
         String userRoleHeader = request.getHeader("X-User-Role");
         String userIdHeader = request.getHeader("X-User-Id");
 
         if (userRoleHeader == null || userIdHeader == null) {
-            // TODO: Exception 처리
-            log.info("User role or ID is required");
+            throw new HeaderMissingException();
         }
 
         UUID userId = UUID.fromString(userIdHeader);
         UserRole userRole = UserRole.valueOf(userRoleHeader);
-
 
         for (UserRole allowedRole : auth.role()) {
             if (allowedRole == userRole) {

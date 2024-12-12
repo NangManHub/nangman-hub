@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ExceptionStatus {
+    REQUEST_HEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMON_001", "요청 헤더가 없습니다."),
     COMPANY_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMPANY_001", "Company를 찾을 수 없습니다."),
     HUB_MANAGER_MISMATCHED(HttpStatus.BAD_REQUEST, "COMPANY_002", "해당 허브의 담당자가 아닙니다."),
     COMPANY_AGENT_MISMATCHED(HttpStatus.FORBIDDEN, "COMPANY_003", "해당 업체의 담당자가 아닙니다."),
