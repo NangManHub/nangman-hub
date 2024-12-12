@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,13 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<ProductGetResponse> getProduct(@PathVariable UUID productId) {
         return ResponseEntity.ok(productService.getProduct(productId));
+    }
+
+    @Auth(role = {UserRole.MASTER, UserRole.MANAGER, UserRole.AGENT})
+    @PutMapping("/{productId}")
+    public ResponseEntity<ProductGetResponse> modifyProduct(@PathVariable UUID productId,
+                                                            @Valid @RequestBody ProductPostRequest request) {
+        return ResponseEntity.ok(productService.modifyProduct(productId, request));
     }
 
 }

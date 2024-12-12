@@ -40,4 +40,11 @@ public class Product extends BaseTimeEntity {
     @Column(nullable = false)
     @Min(0)
     private Integer quantity;
+
+    public void updateAll(UUID hubId, UUID companyId, String name, Integer quantity) {
+        this.hubId = hubId;
+        this.companyId = companyId;
+        this.name = name;
+        this.quantity = quantity;
+    }
 }
