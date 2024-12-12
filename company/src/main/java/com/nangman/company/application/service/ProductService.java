@@ -1,14 +1,18 @@
 package com.nangman.company.application.service;
 
+import com.nangman.company.application.dto.ProductDto;
 import com.nangman.company.application.dto.request.ProductPostRequest;
 import com.nangman.company.application.dto.response.ProductGetResponse;
 import com.nangman.company.application.dto.response.ProductPostResponse;
+import com.nangman.company.application.dto.response.ProductSearchGetResponse;
 import com.nangman.company.common.util.AuthorizationUtils;
-import com.nangman.company.domain.entity.Company;
 import com.nangman.company.domain.entity.Product;
+import com.nangman.company.domain.repository.ProductQueryRepository;
 import com.nangman.company.domain.repository.ProductRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductQueryRepository productQueryRepository;
     private final AuthorizationUtils authorizationUtils;
 
     @Transactional
@@ -48,5 +53,10 @@ public class ProductService {
         authorizationUtils.validateHubManager(product.getHubId());
         authorizationUtils.validateCompanyAgent(product.getCompanyId());
         product.updateIsDeleted(authorizationUtils.getUserIdFromAuthentication());
+    }
+
+    public ProductSearchGetResponse searchProduct(String name, UUID hubId, UUID companyId, Integer quantity, Pageable pageable) {
+        Page<ProductDto> searchProductList = productQueryRepository.searchProduct(name, hubId, companyId, quantity, pageable);
+        return ProductSearchGetResponse.from(searchProductList);
     }
 }
