@@ -9,17 +9,15 @@ import com.nangman.company.application.dto.response.CompanyGetResponse;
 import com.nangman.company.application.dto.response.CompanyPostResponse;
 import com.nangman.company.application.dto.response.CompanyPutResponse;
 import com.nangman.company.application.dto.response.CompanySearchGetResponse;
-import com.nangman.company.common.exception.AgentMismatchException;
 import com.nangman.company.common.exception.HubNotMatchedException;
+import com.nangman.company.common.feign.HubClient;
+import com.nangman.company.common.feign.UserClient;
 import com.nangman.company.common.util.AuthorizationUtils;
 import com.nangman.company.domain.entity.Company;
 import com.nangman.company.domain.enums.CompanyType;
 import com.nangman.company.domain.enums.UserRole;
 import com.nangman.company.domain.repository.CompanyQueryRepository;
 import com.nangman.company.domain.repository.CompanyRepository;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +35,8 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyQueryRepository companyQueryRepository;
     private final AuthorizationUtils authorizationUtils;
+    private final HubClient hubClient;
+    private final UserClient userClient;
 
     public CompanyPostResponse createCompany(CompanyPostRequest request) {
         authorizationUtils.validateHubManager(request.hubId());
@@ -52,25 +52,9 @@ public class CompanyService {
     @Transactional
     public CompanyPutResponse modifyCompany(UUID companyId, CompanyPutRequest request) {
         Company company = companyRepository.getById(companyId);
-
-        if (getUserRoleFromAuthentication() == UserRole.AGENT) {
-            if (!Objects.equals(getUserIdFromAuthentication(), company.getAgentId())) {
-                throw new AgentMismatchException();
-            }
-        }
-
-        // TODO: UserRole이 MANAGER면 담당 허브의 업체만 수정 가능
-        else if (getUserRoleFromAuthentication() == UserRole.MANAGER) {
-            // UUID hubId = hubClient.getHubByManagerId(managerId);
-            UUID hubId = UUID.randomUUID();
-            if (!request.hubId().equals(hubId)) {
-                throw new HubNotMatchedException();
-            }
-        }
-
-        // TODO: HUB 수정 시 존재하는 HUB인지 검증 필요 -> HubClient
-        // TODO: AGENT 수정 시 request agentId가 AGENT role 가진 유저인지 검증 필요 -> UserClient
-
+        authorizationUtils.validateCompanyAgent(company.getId());
+        authorizationUtils.validateHubManager(request.hubId());
+        hubClient.getHubById(request.hubId());
         company.updateAll(request);
         return CompanyPutResponse.from(company);
     }
