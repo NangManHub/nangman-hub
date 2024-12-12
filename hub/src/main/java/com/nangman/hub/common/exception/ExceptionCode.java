@@ -14,6 +14,7 @@ public enum ExceptionCode {
     ROLE_NOT_MASTER(HttpStatus.FORBIDDEN, "MASTER 권한이 필요합니다."),
 
     HUB_NOT_FOUND(HttpStatus.NOT_FOUND, "허브가 존재하지 않습니다."),
+    MANAGER_NOT_FOUND(HttpStatus.NOT_FOUND, "매니저가 존재하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;
