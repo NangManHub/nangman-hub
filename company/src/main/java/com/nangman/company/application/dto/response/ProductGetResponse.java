@@ -15,7 +15,7 @@ public record ProductGetResponse(
                 product.getId(),
                 product.getName(),
                 product.getHubId(),
-                product.getCompanyId(),
+                product.getCompany().getId(),
                 product.getQuantity());
     }
 }

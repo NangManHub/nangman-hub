@@ -6,7 +6,9 @@ import com.nangman.company.application.dto.response.ProductGetResponse;
 import com.nangman.company.application.dto.response.ProductPostResponse;
 import com.nangman.company.application.dto.response.ProductSearchGetResponse;
 import com.nangman.company.common.util.AuthorizationUtils;
+import com.nangman.company.domain.entity.Company;
 import com.nangman.company.domain.entity.Product;
+import com.nangman.company.domain.repository.CompanyRepository;
 import com.nangman.company.domain.repository.ProductQueryRepository;
 import com.nangman.company.domain.repository.ProductRepository;
 import java.util.UUID;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CompanyRepository companyRepository;
     private final ProductQueryRepository productQueryRepository;
     private final AuthorizationUtils authorizationUtils;
 
@@ -28,7 +31,8 @@ public class ProductService {
     public ProductPostResponse createProduct(ProductPostRequest request) {
         authorizationUtils.validateHubManager(request.hubId());
         authorizationUtils.validateCompanyAgent(request.companyId());
-        Product product = productRepository.save(request.toEntity());
+        Company company = companyRepository.getById(request.companyId());
+        Product product = productRepository.save(request.toEntity(company));
         return ProductPostResponse.from(product);
     }
 
@@ -43,7 +47,8 @@ public class ProductService {
         Product product = productRepository.getById(productId);
         authorizationUtils.validateHubManager(request.hubId());
         authorizationUtils.validateCompanyAgent(request.companyId());
-        product.updateAll(request.hubId(), request.companyId(), request.name(), request.quantity());
+        Company company = companyRepository.getById(request.companyId());
+        product.updateAll(request.hubId(), company, request.name(), request.quantity());
         return ProductGetResponse.from(product);
     }
 
@@ -51,7 +56,7 @@ public class ProductService {
     public void deleteProduct(UUID productId) {
         Product product = productRepository.getById(productId);
         authorizationUtils.validateHubManager(product.getHubId());
-        authorizationUtils.validateCompanyAgent(product.getCompanyId());
+        authorizationUtils.validateCompanyAgent(product.getCompany().getId());
         product.updateIsDeleted(authorizationUtils.getUserIdFromAuthentication());
     }
 
