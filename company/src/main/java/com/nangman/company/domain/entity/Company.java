@@ -33,7 +33,7 @@ public class Company extends BaseTimeEntity {
     @Column(nullable = false)
     private UUID hubId;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private UUID agentId;
 
     @Column(length = 20, nullable = false)
