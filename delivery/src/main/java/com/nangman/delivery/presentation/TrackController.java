@@ -5,6 +5,8 @@ import com.nangman.delivery.application.dto.request.TrackPutRequest;
 import com.nangman.delivery.application.dto.request.TrackSearchRequest;
 import com.nangman.delivery.application.dto.response.TrackResponse;
 import com.nangman.delivery.application.service.TrackService;
+import com.nangman.delivery.common.annotation.RoleCheck;
+import com.nangman.delivery.domain.enums.UserRole;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -27,25 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class TrackController {
     private final TrackService trackService;
 
+    @RoleCheck(role = {UserRole.MASTER})
     @PutMapping("/{trackId}")
     public ResponseEntity<TrackResponse> updateTrack(@PathVariable UUID trackId,
                                                      @Valid @RequestBody TrackPutRequest request) {
         TrackResponse trackResponse = trackService.updateTrack(trackId, request);
-
-        return ResponseEntity.ok(trackResponse);
-    }
-
-    @PatchMapping("/{trackId}/completion")
-    public ResponseEntity<TrackResponse> completeTrack(@PathVariable UUID trackId,
-                                                       @Valid @RequestBody TrackCompletionPatchRequest request) {
-        TrackResponse trackResponse = trackService.completeTrack(trackId, request);
-
-        return ResponseEntity.ok(trackResponse);
-    }
-
-    @PatchMapping("/{trackId}/departure")
-    public ResponseEntity<TrackResponse> departureTrack(@PathVariable UUID trackId) {
-        TrackResponse trackResponse = trackService.departureTrack(trackId);
 
         return ResponseEntity.ok(trackResponse);
     }
@@ -56,4 +44,22 @@ public class TrackController {
 
         return ResponseEntity.ok(new PagedModel<>(trackResponses));
     }
+
+    @RoleCheck(role = {UserRole.MASTER})
+    @PatchMapping("/{trackId}/completion")
+    public ResponseEntity<TrackResponse> completeTrack(@PathVariable UUID trackId,
+                                                       @Valid @RequestBody TrackCompletionPatchRequest request) {
+        TrackResponse trackResponse = trackService.completeTrack(trackId, request);
+
+        return ResponseEntity.ok(trackResponse);
+    }
+
+    @RoleCheck(role = {UserRole.MASTER})
+    @PatchMapping("/{trackId}/departure")
+    public ResponseEntity<TrackResponse> departureTrack(@PathVariable UUID trackId) {
+        TrackResponse trackResponse = trackService.departureTrack(trackId);
+
+        return ResponseEntity.ok(trackResponse);
+    }
+
 }
