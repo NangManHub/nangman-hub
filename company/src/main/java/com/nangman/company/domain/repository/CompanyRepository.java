@@ -10,9 +10,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CompanyRepository extends JpaRepository<Company, UUID> {
 
     Optional<Company> findByAgentId(UUID agentId);
+    Optional<Company> findByIdAndIsDeleteFalse(UUID id);
 
     default Company getById(UUID companyId) {
-        return findById(companyId).orElseThrow(CompanyNotFoundException::new);
+        return findByIdAndIsDeleteFalse(companyId).orElseThrow(CompanyNotFoundException::new);
     }
 
     default Company getByAgentId(UUID agentId) {
