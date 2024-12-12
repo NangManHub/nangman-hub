@@ -46,4 +46,12 @@ public class User extends BaseEntity {
                 Hub.of(UUID.randomUUID(), "hub명", "hub주소", 1.0, 1.0)
         );
     }
+
+    public void update(String username, String encodedPassword, String name, UserRole role, String slackId) {
+        this.username = username;
+        this.password = encodedPassword;
+        this.name = name;
+        this.role = role;
+        this.slackId = slackId;
+    }
 }
