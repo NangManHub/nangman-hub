@@ -37,6 +37,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyQueryRepository companyQueryRepository;
     private final AuthorizationUtils authorizationUtils;
+
     public CompanyPostResponse createCompany(CompanyPostRequest request) {
         authorizationUtils.validateHubManager(request.hubId());
         Company company = companyRepository.save(request.toEntity());
@@ -45,12 +46,7 @@ public class CompanyService {
 
     public CompanyGetResponse getCompany(UUID companyId) {
         Company company = companyRepository.getById(companyId);
-        // TODO: Hub, Agent 가져오는 Feign Client 개발
-        // HubDto hub = hubClient.getHubById(company.getHubId());
-        // UserDto agent = userClient.getUserById(company.getAgentId());
-        return CompanyGetResponse.of(company,
-                new HubDto(UUID.randomUUID(), "name", "address", UserDto.createTmpUser()),
-                UserDto.createTmpUser());
+        return CompanyGetResponse.from(company);
     }
 
     @Transactional
