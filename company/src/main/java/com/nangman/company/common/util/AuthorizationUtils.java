@@ -19,6 +19,7 @@ public class AuthorizationUtils {
     private final CompanyRepository companyRepository;
 
     public void validateHubManager(UUID requestHubId) {
+        // TODO: 허브 담당자 ID로 담당 HUB 찾아와서 비교
         if (getUserRoleFromAuthentication() == UserRole.MANAGER) {
             // UUID hubId = hubClient.getHubByManagerId(managerId);
             UUID hubId = UUID.randomUUID();

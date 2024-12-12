@@ -36,7 +36,6 @@ public class CompanyService {
     private final CompanyQueryRepository companyQueryRepository;
     private final AuthorizationUtils authorizationUtils;
     private final HubClient hubClient;
-    private final UserClient userClient;
 
     public CompanyPostResponse createCompany(CompanyPostRequest request) {
         authorizationUtils.validateHubManager(request.hubId());
@@ -62,15 +61,7 @@ public class CompanyService {
     @Transactional
     public void deleteCompany(UUID companyId) {
         Company company = companyRepository.getById(companyId);
-        // TODO: MANAGER는 담당 HUB의 업체만 삭제 가능 -> HubClient
-        if (getUserRoleFromAuthentication() == UserRole.MANAGER) {
-            // UUID hubId = hubClient.getHubByManagerId(managerId);
-            UUID hubId = UUID.randomUUID();
-            if(!company.getHubId().equals(hubId)) {
-                throw new HubNotMatchedException();
-            }
-        }
-
+        authorizationUtils.validateHubManager(company.getHubId());
         company.updateIsDeleted(getUserIdFromAuthentication());
     }
 
