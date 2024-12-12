@@ -27,20 +27,21 @@ public class ShipperService {
     public ShipperPostResponse createShipper(UUID reqUserId, ShipperPostRequest shipperPostRequest) {
 
         verifyRole(reqUserId);
-        User user = userRepository.findById(shipperPostRequest.userId()).orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        if(user.getRole() != UserRole.SHIPPER) throw new CustomException(ExceptionType.INTERNAL_SERVER_ERROR);
+        User user = userRepository.findUser(reqUserId);
+        if(user.getRole() != UserRole.SHIPPER) throw new CustomException(ExceptionType.ONLY_SHIPPER_REGISTERED);
+
         Shipper savedShipper = shipperRepository.save(shipperPostRequest.toEntity(user));
         return ShipperPostResponse.from(savedShipper);
     }
 
     private void verifyRole(UUID reqUserId){
         // TODO 권한 확인 (마스터 관리자 OR 담당 허브 관리자면 OK)
-        User reqUser = userRepository.findById(reqUserId).orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        UserRole reqUserRole = reqUser.getRole();
+        UserRole reqUserRole = userRepository.findUser(reqUserId).getRole();
 
-        if(reqUserRole != UserRole.MANAGER && reqUserRole != UserRole.MASTER) throw new CustomException(ExceptionType.INTERNAL_SERVER_ERROR);
+        if(reqUserRole != UserRole.MANAGER && reqUserRole != UserRole.MASTER) throw new CustomException(ExceptionType.SHIPPER_ACCESS_DENIED);
 
-        if(reqUserRole == UserRole.MANAGER){ // 담당 허브관리자 확인 로직
+        if(reqUserRole == UserRole.MANAGER){
+            // TODO FeignClient로 담당 허브 관리자 확인 처리
         }
 
     }
