@@ -6,6 +6,6 @@ public record HubDto(
         UUID hubId,
         String name,
         String address,
-        UserDto manager
+        UUID managerId
 ) {
 }

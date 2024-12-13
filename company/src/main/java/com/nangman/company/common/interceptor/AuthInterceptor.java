@@ -1,5 +1,6 @@
 package com.nangman.company.common.interceptor;
 
+import com.nangman.company.common.exception.HeaderMissingException;
 import com.nangman.company.domain.enums.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         HandlerMethod method = (HandlerMethod) handler;
         Auth auth = method.getMethodAnnotation(Auth.class);
+        // @Auth 어노테이션 적용이 안된 메소드는 통과
         if (auth == null) {
             return true;
         }
@@ -34,14 +36,13 @@ public class AuthInterceptor implements HandlerInterceptor {
         String userIdHeader = request.getHeader("X-User-Id");
 
         if (userRoleHeader == null || userIdHeader == null) {
-            // TODO: Exception 처리
-            log.info("User role or ID is required");
+            throw new HeaderMissingException();
         }
 
         UUID userId = UUID.fromString(userIdHeader);
         UserRole userRole = UserRole.valueOf(userRoleHeader);
 
-
+        // 현재 UserRole이 허용된 접근 권한(auth.role)에 속해 있는 지 확인
         for (UserRole allowedRole : auth.role()) {
             if (allowedRole == userRole) {
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRoleHeader);

@@ -64,7 +64,7 @@ public class ProductQueryRepository {
 
     private BooleanExpression eqProductCompanyId(UUID companyId) {
         return Optional.ofNullable(companyId)
-                .map(product.companyId::eq)
+                .map(product.company.id::eq)
                 .orElse(null);
     }
 
