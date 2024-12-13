@@ -32,4 +32,12 @@ public class ShipperController {
 
         return ResponseEntity.status(HttpStatus.OK).body(shipperService.updateShipper(reqUserId, shipperId, shipperPutRequest));
     }
+
+    @DeleteMapping("/{shipperId}")
+    public ResponseEntity<?> deleteShipper(@RequestHeader(name = "X-User-Id") UUID reqUserId, @PathVariable UUID shipperId) {
+
+        shipperService.deleteShipper(reqUserId, shipperId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
 }

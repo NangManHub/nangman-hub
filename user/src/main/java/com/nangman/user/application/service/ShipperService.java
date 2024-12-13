@@ -55,6 +55,15 @@ public class ShipperService {
         return ShipperPutResponse.from(shipper);
     }
 
+    @Transactional
+    public void deleteShipper(UUID reqUserId, UUID shipperId) {
+        Shipper shipper = shipperRepository.findShipper(shipperId);
+
+        verifyRole(reqUserId, shipper.getHubId());
+
+        shipper.delete(reqUserId);
+    }
+
     private void verifyRole(UUID reqUserId, UUID hubId){
         UserRole reqUserRole = userRepository.findUser(reqUserId).getRole();
 
