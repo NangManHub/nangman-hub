@@ -1,13 +1,14 @@
 package com.nangman.delivery.application.dto.response;
 
 import com.nangman.delivery.domain.entity.Track;
-import com.nangman.delivery.domain.entity.TrackStatus;
+import com.nangman.delivery.domain.enums.TrackStatus;
 import java.util.Date;
 import java.util.UUID;
 import lombok.Builder;
 
 @Builder
 public record TrackResponse(
+        UUID trackId,
         UUID deliveryId,
         Integer sequence,
         UUID shipperId,
@@ -24,6 +25,7 @@ public record TrackResponse(
     public static TrackResponse from(Track track) {
         return TrackResponse.builder()
                 .deliveryId(track.getDelivery().getId())
+                .trackId(track.getId())
                 .sequence(track.getSequence())
                 .shipperId(track.getShipperId())
                 .fromHubId(track.getFromHubId())

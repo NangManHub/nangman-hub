@@ -1,10 +1,9 @@
 package com.nangman.delivery.application.dto.request;
 
-import com.nangman.delivery.domain.entity.TrackStatus;
+import com.nangman.delivery.domain.enums.TrackStatus;
 import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
-import lombok.NonNull;
 
 public record TrackPutRequest(
         @NotNull Integer sequence,

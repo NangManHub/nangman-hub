@@ -7,8 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-public interface TrackRepository extends JpaRepository<Track, UUID> {
+public interface TrackRepository extends JpaRepository<Track, UUID>, QuerydslPredicateExecutor<Track> {
 
     @NonNull
     default Track getById(@NonNull UUID trackId) {

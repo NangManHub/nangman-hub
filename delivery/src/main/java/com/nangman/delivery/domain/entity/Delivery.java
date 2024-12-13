@@ -2,6 +2,7 @@ package com.nangman.delivery.domain.entity;
 
 import com.nangman.delivery.common.exception.DomainException;
 import com.nangman.delivery.common.exception.ExceptionStatus;
+import com.nangman.delivery.domain.enums.DeliveryStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

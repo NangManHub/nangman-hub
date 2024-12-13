@@ -1,6 +1,6 @@
 package com.nangman.delivery.application.dto.request;
 
-import com.nangman.delivery.domain.entity.DeliveryStatus;
+import com.nangman.delivery.domain.enums.DeliveryStatus;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 

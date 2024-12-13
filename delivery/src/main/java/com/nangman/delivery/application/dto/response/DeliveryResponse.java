@@ -1,7 +1,7 @@
 package com.nangman.delivery.application.dto.response;
 
 import com.nangman.delivery.domain.entity.Delivery;
-import com.nangman.delivery.domain.entity.DeliveryStatus;
+import com.nangman.delivery.domain.enums.DeliveryStatus;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
