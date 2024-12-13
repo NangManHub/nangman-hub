@@ -1,4 +1,4 @@
-package com.nangman.hub.application.dto;
+package com.nangman.hub.application.dto.request;
 
 import com.nangman.hub.domain.entity.Hub;
 import jakarta.validation.constraints.NotNull;

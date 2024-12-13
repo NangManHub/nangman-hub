@@ -1,4 +1,4 @@
-package com.nangman.hub.application.dto;
+package com.nangman.hub.application.dto.request;
 
 import java.util.UUID;
 

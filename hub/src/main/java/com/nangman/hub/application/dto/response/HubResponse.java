@@ -1,5 +1,6 @@
-package com.nangman.hub.application.dto;
+package com.nangman.hub.application.dto.response;
 
+import com.nangman.hub.application.dto.BaseDto;
 import com.nangman.hub.domain.entity.Hub;
 import lombok.Builder;
 

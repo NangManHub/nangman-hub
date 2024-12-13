@@ -1,8 +1,8 @@
 package com.nangman.hub.presentation;
 
-import com.nangman.hub.application.dto.HubPostRequest;
-import com.nangman.hub.application.dto.HubResponse;
-import com.nangman.hub.application.dto.HubSearchRequest;
+import com.nangman.hub.application.dto.request.HubPostRequest;
+import com.nangman.hub.application.dto.response.HubResponse;
+import com.nangman.hub.application.dto.request.HubSearchRequest;
 import com.nangman.hub.application.dto.UserRole;
 import com.nangman.hub.application.service.HubService;
 import com.nangman.hub.common.exception.CustomException;
