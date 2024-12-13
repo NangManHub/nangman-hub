@@ -1,6 +1,8 @@
 spring:
   application:
     name: delivery
+  profiles:
+    include: swagger
 
   jpa:
     hibernate:
@@ -27,3 +29,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka
+
+service:
+  gateway:
+    secret-key: ${GATEWAY_SECRET_KEY}
