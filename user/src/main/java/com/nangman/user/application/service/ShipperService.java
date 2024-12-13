@@ -2,7 +2,9 @@ package com.nangman.user.application.service;
 
 import com.nangman.user.application.dto.HubDto;
 import com.nangman.user.application.dto.request.ShipperPostRequest;
+import com.nangman.user.application.dto.request.ShipperPutRequest;
 import com.nangman.user.application.dto.response.ShipperPostResponse;
+import com.nangman.user.application.dto.response.ShipperPutResponse;
 import com.nangman.user.common.exception.CustomException;
 import com.nangman.user.common.exception.ExceptionType;
 import com.nangman.user.common.feign.HubClient;
@@ -37,6 +39,20 @@ public class ShipperService {
 
         Shipper savedShipper = shipperRepository.save(shipperPostRequest.toEntity(shipper));
         return ShipperPostResponse.from(savedShipper);
+    }
+
+    @Transactional
+    public ShipperPutResponse updateShipper(UUID reqUserId, UUID shipperId, ShipperPutRequest shipperPutRequest) {
+
+        verifyRole(reqUserId, shipperPutRequest.hubId());
+
+        Shipper shipper = shipperRepository.findShipper(shipperId);
+
+        hubClient.getHub(shipperPutRequest.hubId());
+
+        shipper.update(shipperPutRequest.hubId(), shipperPutRequest.type());
+
+        return ShipperPutResponse.from(shipper);
     }
 
     private void verifyRole(UUID reqUserId, UUID hubId){

@@ -29,4 +29,8 @@ public class Shipper extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ShipperType type;
 
+    public void update(UUID hubId, ShipperType type) {
+        this.hubId = hubId;
+        this.type =type;
+    }
 }

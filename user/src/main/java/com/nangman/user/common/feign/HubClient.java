@@ -13,4 +13,6 @@ public interface HubClient {
     @GetMapping("/hubs/managers/{managerId}")
     HubDto getHubByManagerId (@PathVariable UUID managerId);
 
+    @GetMapping("/hubs/{hubId}")
+    HubDto getHub(@PathVariable UUID hubId);
 }
