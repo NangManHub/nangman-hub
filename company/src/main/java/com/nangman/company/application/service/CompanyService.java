@@ -30,12 +30,14 @@ public class CompanyService {
     private final AuthorizationUtils authorizationUtils;
     private final HubClient hubClient;
 
+    @Transactional
     public CompanyPostResponse createCompany(CompanyPostRequest request) {
         authorizationUtils.validateHubManager(request.hubId());
         Company company = companyRepository.save(request.toEntity());
         return CompanyPostResponse.from(company);
     }
 
+    @Transactional(readOnly = true)
     public CompanyGetResponse getCompany(UUID companyId) {
         Company company = companyRepository.getById(companyId);
         return CompanyGetResponse.from(company);
