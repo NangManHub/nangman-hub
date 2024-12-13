@@ -1,21 +1,16 @@
 package com.nangman.company.application.service;
 
 import com.nangman.company.application.dto.CompanyDto;
-import com.nangman.company.application.dto.HubDto;
-import com.nangman.company.application.dto.UserDto;
 import com.nangman.company.application.dto.request.CompanyPostRequest;
 import com.nangman.company.application.dto.request.CompanyPutRequest;
 import com.nangman.company.application.dto.response.CompanyGetResponse;
 import com.nangman.company.application.dto.response.CompanyPostResponse;
 import com.nangman.company.application.dto.response.CompanyPutResponse;
 import com.nangman.company.application.dto.response.CompanySearchGetResponse;
-import com.nangman.company.common.exception.HubNotMatchedException;
 import com.nangman.company.common.feign.HubClient;
-import com.nangman.company.common.feign.UserClient;
 import com.nangman.company.common.util.AuthorizationUtils;
 import com.nangman.company.domain.entity.Company;
 import com.nangman.company.domain.enums.CompanyType;
-import com.nangman.company.domain.enums.UserRole;
 import com.nangman.company.domain.repository.CompanyQueryRepository;
 import com.nangman.company.domain.repository.CompanyRepository;
 import java.util.UUID;
@@ -23,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +55,7 @@ public class CompanyService {
     public void deleteCompany(UUID companyId) {
         Company company = companyRepository.getById(companyId);
         authorizationUtils.validateHubManager(company.getHubId());
-        company.updateIsDeleted(getUserIdFromAuthentication());
+        company.updateIsDeleted(authorizationUtils.getUserIdFromAuthentication());
     }
 
     public CompanySearchGetResponse searchCompany(String name, UUID hubId, UUID agentId, CompanyType type, String address, Pageable pageable) {
@@ -70,19 +63,4 @@ public class CompanyService {
         return CompanySearchGetResponse.from(companySearchList);
     }
 
-    private UUID getUserIdFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication.getAuthorities().isEmpty()) {
-            return null;
-        }
-        return UUID.fromString(authentication.getPrincipal().toString());
-    }
-
-    private UserRole getUserRoleFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication.getAuthorities().isEmpty()) {
-            return null;
-        }
-        return UserRole.valueOf(authentication.getAuthorities().iterator().next().getAuthority());
-    }
 }
