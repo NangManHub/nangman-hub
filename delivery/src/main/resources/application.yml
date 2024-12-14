@@ -22,6 +22,22 @@ spring:
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
 
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER_URL}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+      value-serializer: org.apache.kafka.common.serialization.JsonSerializer
+    consumer:
+        key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.JsonDeserializer
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+
 server:
   port: 19094
 
