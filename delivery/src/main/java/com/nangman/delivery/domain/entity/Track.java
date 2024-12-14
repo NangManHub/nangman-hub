@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "p_tracks")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Track extends BaseEntity {
 
     @Id
@@ -37,8 +38,9 @@ public class Track extends BaseEntity {
     @Column(name = "sequence", nullable = false)
     private Integer sequence;
 
-    @Column(name = "shipper_id", nullable = false)
-    private UUID shipperId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipper_id", nullable = false)
+    private Shipper shipper;
 
     @Column(name = "from_hub_id", nullable = false)
     private UUID fromHubId;
@@ -68,11 +70,11 @@ public class Track extends BaseEntity {
     private Date departureTime;
 
     @Builder
-    public Track(Delivery delivery, Integer sequence, UUID shipperId, UUID fromHubId, UUID toHubId, String address,
+    public Track(Delivery delivery, Integer sequence, Shipper shipper, UUID fromHubId, UUID toHubId, String address,
                  Integer expectDistance, Integer expectTime) {
         this.delivery = delivery;
         this.sequence = sequence;
-        this.shipperId = shipperId;
+        this.shipper = shipper;
         this.fromHubId = fromHubId;
         this.toHubId = toHubId;
         this.address = address;
@@ -81,10 +83,10 @@ public class Track extends BaseEntity {
         this.status = TrackStatus.WAITING;
     }
 
-    public void update(Integer sequence, UUID shipperId, UUID fromHubId, UUID toHubId, String address, Integer expectDistance,
+    public void update(Integer sequence, Shipper shipper, UUID fromHubId, UUID toHubId, String address, Integer expectDistance,
                        Integer expectTime, Integer actualDistance, Integer actualTime, TrackStatus status, Date departureTime) {
         this.sequence = sequence;
-        this.shipperId = shipperId;
+        this.shipper = shipper;
         this.fromHubId = fromHubId;
         this.toHubId = toHubId;
         this.address = address;

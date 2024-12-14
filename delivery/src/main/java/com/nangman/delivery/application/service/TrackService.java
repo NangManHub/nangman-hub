@@ -6,8 +6,10 @@ import com.nangman.delivery.application.dto.request.TrackSearchRequest;
 import com.nangman.delivery.application.dto.response.TrackResponse;
 import com.nangman.delivery.common.util.AuthorizationUtils;
 import com.nangman.delivery.domain.entity.QTrack;
+import com.nangman.delivery.domain.entity.Shipper;
 import com.nangman.delivery.domain.entity.Track;
 import com.nangman.delivery.domain.enums.UserRole;
+import com.nangman.delivery.domain.repository.ShipperRepository;
 import com.nangman.delivery.domain.repository.TrackRepository;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TrackService {
     private final TrackRepository trackRepository;
+    private final ShipperRepository shipperRepository;
     private final AuthorizationUtils authorizationUtils;
 
     @Transactional
@@ -30,8 +33,9 @@ public class TrackService {
         authorizationUtils.validateTrackHubManager(trackId);
         authorizationUtils.validateTrackShipper(trackId);
         Track track = trackRepository.getById(trackId);
+        Shipper shipper = shipperRepository.getById(request.shipperId());
 
-        track.update(request.sequence(), request.shipperId(), request.fromHubId(), request.toHubId(), request.address(),
+        track.update(request.sequence(), shipper, request.fromHubId(), request.toHubId(), request.address(),
                 request.expectDistance(), request.expectTime(), request.actualDistance(), request.actualTime(),
                 request.status(), request.departureTime());
 
@@ -72,7 +76,7 @@ public class TrackService {
                 managerAndShipperExpression,
                 searchRequest.deliveryId() != null ? track.delivery.id.eq(searchRequest.deliveryId()) : null,
                 searchRequest.sequence() != null ? track.sequence.eq(searchRequest.sequence()) : null,
-                searchRequest.shipperId() != null ? track.shipperId.eq(searchRequest.shipperId()) : null,
+                searchRequest.shipperId() != null ? track.shipper.id.eq(searchRequest.shipperId()) : null,
                 searchRequest.fromHubId() != null ? track.fromHubId.eq(searchRequest.fromHubId()) : null,
                 searchRequest.toHubId() != null ? track.toHubId.eq(searchRequest.toHubId()) : null,
                 searchRequest.address() != null ? track.address.contains(searchRequest.address()) : null,
