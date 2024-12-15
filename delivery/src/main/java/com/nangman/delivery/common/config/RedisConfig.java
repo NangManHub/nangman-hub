@@ -12,10 +12,10 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<String, UUID> shipperRedisTemplate(
+    public RedisTemplate<UUID, UUID> shipperRedisTemplate(
             RedisConnectionFactory redisConnectionFactory) {
         //TODO: UUID -> ShipperDto 로 변경
-        RedisTemplate<String, UUID> redisTemplate = new RedisTemplate<>();
+        RedisTemplate<UUID, UUID> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(RedisSerializer.string());
         // TODO: JAVA로 변경
@@ -24,8 +24,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public ListOperations<String, UUID> shipperListOperations(
-            RedisTemplate<String, UUID> shipperRedisTemplate) {
+    public ListOperations<UUID, UUID> shipperListOperations(
+            RedisTemplate<UUID, UUID> shipperRedisTemplate) {
         return shipperRedisTemplate.opsForList();
     }
 }
