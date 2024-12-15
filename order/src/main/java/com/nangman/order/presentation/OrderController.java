@@ -1,8 +1,10 @@
 package com.nangman.order.presentation;
 
 import com.nangman.order.application.dto.request.OrderPostRequest;
+import com.nangman.order.application.dto.request.OrderPutRequest;
 import com.nangman.order.application.dto.response.OrderGetResponse;
 import com.nangman.order.application.dto.response.OrderPostResponse;
+import com.nangman.order.application.dto.response.OrderPutResponse;
 import com.nangman.order.application.service.OrderService;
 import com.nangman.order.common.interceptor.Auth;
 import com.nangman.order.domain.enums.UserRole;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,5 +36,12 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderGetResponse> getOrder(@PathVariable UUID orderId) {
         return ResponseEntity.ok(orderService.getOrder(orderId));
+    }
+
+    @Auth(role = {UserRole.MASTER, UserRole.MANAGER})
+    @PutMapping("/{orderId}")
+    public ResponseEntity<OrderGetResponse> modifyOrder(@PathVariable UUID orderId,
+                                                        @RequestBody OrderPutRequest request) {
+        return ResponseEntity.ok(orderService.modifyOrder(orderId, request));
     }
 }

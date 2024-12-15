@@ -3,6 +3,7 @@ package com.nangman.order.application.service;
 import com.nangman.order.application.dto.CompanyDto;
 import com.nangman.order.application.dto.OrderEvent;
 import com.nangman.order.application.dto.request.OrderPostRequest;
+import com.nangman.order.application.dto.request.OrderPutRequest;
 import com.nangman.order.application.dto.response.OrderGetResponse;
 import com.nangman.order.application.dto.response.OrderPostResponse;
 import com.nangman.order.common.feign.CompanyClient;
@@ -45,7 +46,7 @@ public class OrderService {
     public OrderGetResponse getOrder(UUID orderId) {
         Order order = orderRepository.getById(orderId);
         CompanyDto companyDto = companyClient.getCompanyById(order.getReceiverId());
-        authorizationUtils.validateHubManager(companyDto.hubId());
+        authorizationUtils.validateHubManager(order.getReceiverId());
         // TODO: Delivery 생성 후 SHIPPER 권한 확인 테스트 필요
         // authorizationUtils.validateDeliveryShipper(order.getDeliveryId());
         authorizationUtils.validateCompanyAgent(companyDto.agentId());
@@ -53,4 +54,23 @@ public class OrderService {
         return OrderGetResponse.from(order);
     }
 
+    @Transactional
+    public OrderGetResponse modifyOrder(UUID orderId, OrderPutRequest request) {
+        Order order = orderRepository.getById(orderId);
+        authorizationUtils.validateHubManager(order.getReceiverId());
+
+        // 존재하는 company인지 검증
+        companyClient.getCompanyById(request.supplierId());
+        companyClient.getCompanyById(request.receiverId());
+
+        order.updateAll(
+                request.supplierId(),
+                request.receiverId(),
+                request.productId(),
+                request.deliveryId(),
+                request.productQuantity(),
+                request.requestMessage());
+
+        return OrderGetResponse.from(order);
+    }
 }

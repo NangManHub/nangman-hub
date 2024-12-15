@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "p_orders")
-public class Order {
+public class Order extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -41,5 +41,19 @@ public class Order {
 
     @Column(length = 50)
     private String requestMessage;
+
+    public void updateAll(UUID supplierId,
+                          UUID receiverId,
+                          UUID productId,
+                          UUID deliveryId,
+                          Integer productQuantity,
+                          String requestMessage) {
+        this.supplierId = supplierId;
+        this.receiverId = receiverId;
+        this.productId = productId;
+        this.deliveryId = deliveryId;
+        this.productQuantity = productQuantity;
+        this.requestMessage = requestMessage;
+    }
 
 }
