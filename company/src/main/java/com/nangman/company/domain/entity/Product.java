@@ -1,5 +1,6 @@
 package com.nangman.company.domain.entity;
 
+import com.nangman.company.common.exception.InsufficientStockException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -48,5 +49,12 @@ public class Product extends BaseTimeEntity {
         this.company = company;
         this.name = name;
         this.quantity = quantity;
+    }
+
+    public void updateQuantity(Integer quantity) {
+        if (this.quantity < quantity) {
+            throw new InsufficientStockException();
+        }
+        this.quantity -= quantity;
     }
 }

@@ -9,7 +9,8 @@ public record CompanyGetResponse(
         String name,
         UUID hubId,
         CompanyType type,
-        UUID agentId
+        UUID agentId,
+        String address
 ) {
     public static CompanyGetResponse from(Company company) {
         return new CompanyGetResponse(
@@ -17,7 +18,8 @@ public record CompanyGetResponse(
                 company.getName(),
                 company.getHubId(),
                 company.getType(),
-                company.getAgentId()
+                company.getAgentId(),
+                company.getAddress()
         );
     }
 }

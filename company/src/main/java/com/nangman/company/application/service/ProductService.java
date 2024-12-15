@@ -3,6 +3,7 @@ package com.nangman.company.application.service;
 import com.nangman.company.application.dto.ProductDto;
 import com.nangman.company.application.dto.request.ProductPostRequest;
 import com.nangman.company.application.dto.response.ProductGetResponse;
+import com.nangman.company.application.dto.response.ProductPatchResponse;
 import com.nangman.company.application.dto.response.ProductPostResponse;
 import com.nangman.company.application.dto.response.ProductSearchGetResponse;
 import com.nangman.company.common.util.AuthorizationUtils;
@@ -63,5 +64,12 @@ public class ProductService {
     public ProductSearchGetResponse searchProduct(String name, UUID hubId, UUID companyId, Integer quantity, Pageable pageable) {
         Page<ProductDto> searchProductList = productQueryRepository.searchProduct(name, hubId, companyId, quantity, pageable);
         return ProductSearchGetResponse.from(searchProductList);
+    }
+
+    @Transactional
+    public ProductPatchResponse checkProductQuantity(UUID productId, Integer quantity) {
+        Product product = productRepository.getById(productId);
+        product.updateQuantity(quantity);
+        return ProductPatchResponse.from(product);
     }
 }
