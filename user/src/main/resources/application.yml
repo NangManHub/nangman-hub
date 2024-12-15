@@ -54,3 +54,11 @@ springdoc:
     - /**
 #  paths-to-exclude: # 문서화 제외할 API 경로 지정
 #    - /auth/**
+
+management:
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0
