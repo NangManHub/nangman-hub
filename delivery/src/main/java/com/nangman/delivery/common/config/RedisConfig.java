@@ -12,10 +12,10 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<UUID, UUID> shipperRedisTemplate(
+    public RedisTemplate<String, UUID> shipperRedisTemplate(
             RedisConnectionFactory redisConnectionFactory) {
         //TODO: UUID -> ShipperDto 로 변경
-        RedisTemplate<UUID, UUID> redisTemplate = new RedisTemplate<>();
+        RedisTemplate<String, UUID> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(RedisSerializer.string());
         // TODO: JAVA로 변경
