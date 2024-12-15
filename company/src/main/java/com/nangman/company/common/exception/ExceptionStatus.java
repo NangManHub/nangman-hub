@@ -12,7 +12,8 @@ public enum ExceptionStatus {
     HUB_NOT_FOUND_BY_MANAGER_ID(HttpStatus.BAD_REQUEST, "COMPANY_004", "해당 담당자는 담당하는 업체가 없습니다."),
     HUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMPANY_005", "Hub를 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMPANY_006", "User를 찾을 수 없습니다."),
-    PRODUCT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PRODUCT_001", "Product를 찾을 수 없습니다.");
+    PRODUCT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PRODUCT_001", "Product를 찾을 수 없습니다."),
+    PRODUCT_QUANTITY_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "PRODUCT_002", "상품 수량이 부족합니다.");
 
     private final int status;
     private final String customCode;
