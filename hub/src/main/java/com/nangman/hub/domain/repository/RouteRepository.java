@@ -12,8 +12,15 @@ import java.util.UUID;
 public interface RouteRepository extends JpaRepository<Route, UUID>, QuerydslPredicateExecutor<Route> {
     Optional<Route> findByIdAndIsDeleteFalse(UUID routeId);
 
+    Optional<Route> findByFromHubIdAndToHubIdAndIsDeleteFalse(UUID fromHubId, UUID toHubId);
+
     default Route findRoute(UUID routeId) {
         return findByIdAndIsDeleteFalse(routeId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.ROUTE_NOT_FOUND));
+    }
+
+    default Route findRouteByHub(UUID fromHubId, UUID toHubId) {
+        return findByFromHubIdAndToHubIdAndIsDeleteFalse(fromHubId, toHubId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.ROUTE_NOT_FOUND));
     }
 }
