@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "p_shippers")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Shipper extends BaseEntity {
+public class Shipper {
 
     @Id
     private UUID id;
@@ -44,10 +44,6 @@ public class Shipper extends BaseEntity {
         this.hubId = hubId;
         this.totalDistance = totalDistance;
         this.shipperType = shipperType;
-    }
-
-    public void delete() {
-        super.delete(null);
     }
 
     public void update(UUID hubId, ShipperType type) {

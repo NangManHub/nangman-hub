@@ -30,6 +30,6 @@ public class ShipperService {
         Shipper shipper = shipperRepository.getById(shipperMessage.userId());
 
         redisService.deleteShipperZSet(shipper);
-        shipper.delete();
+        shipperRepository.delete(shipper);
     }
 }
