@@ -15,15 +15,17 @@ public record HubPostRequest(
         @NotNull
         Double longitude,
         @NotNull
-        UUID managerId
+        UUID managerId,
+        UUID parentHubId
 ) {
-    public Hub toEntity() {
+    public Hub toEntity(Hub parentHub) {
         return Hub.builder()
                 .name(name)
                 .address(address)
                 .latitude(latitude)
                 .longitude(longitude)
                 .managerId(managerId)
+                .parentHub(parentHub)
                 .build();
     }
 }

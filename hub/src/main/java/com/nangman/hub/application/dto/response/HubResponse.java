@@ -14,6 +14,7 @@ public record HubResponse(
         Double latitude,
         Double longitude,
         UUID managerId,
+        UUID parentHubId,
         BaseDto baseDto
 ) {
     public static HubResponse from(Hub hub) {
@@ -24,6 +25,7 @@ public record HubResponse(
                 .latitude(hub.getLatitude())
                 .longitude(hub.getLongitude())
                 .managerId(hub.getManagerId())
+                .parentHubId(hub.getParentHub() != null ? hub.getParentHub().getId() : null)
                 .baseDto(BaseDto.from(hub))
                 .build();
     }

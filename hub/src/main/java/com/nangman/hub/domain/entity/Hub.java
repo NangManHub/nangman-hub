@@ -33,20 +33,26 @@ public class Hub extends BaseEntity {
     @Column(nullable = false)
     private UUID managerId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_hub_id")
+    private Hub parentHub;
+
     @Builder
-    public Hub(String name, String address, Double latitude, Double longitude, UUID managerId) {
+    public Hub(String name, String address, Double latitude, Double longitude, UUID managerId, Hub parentHub) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.managerId = managerId;
+        this.parentHub = parentHub;
     }
 
-    public void update(String name, String address, Double latitude, Double longitude, UUID managerId) {
+    public void update(String name, String address, Double latitude, Double longitude, UUID managerId, Hub parentHub) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.managerId = managerId;
+        this.parentHub = parentHub;
     }
 }

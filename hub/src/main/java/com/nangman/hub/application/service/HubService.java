@@ -31,7 +31,8 @@ public class HubService {
     public HubResponse createHub(HubPostRequest postRequest) {
         checkManager(postRequest.managerId());
 
-        Hub hub = hubRepository.save(postRequest.toEntity());
+        Hub parentHub = postRequest.parentHubId() != null ? hubRepository.findHub(postRequest.parentHubId()) : null;
+        Hub hub = hubRepository.save(postRequest.toEntity(parentHub));
         return HubResponse.from(hub);
     }
 
@@ -54,6 +55,9 @@ public class HubService {
         if (searchRequest.managerId() != null) {
             qBuilder.and(QHub.hub.managerId.eq(searchRequest.managerId()));
         }
+        if (searchRequest.parentHubId() != null) {
+            qBuilder.and(QHub.hub.parentHub.id.eq(searchRequest.parentHubId()));
+        }
         return hubRepository.findAll(qBuilder, pageable).map(HubResponse::from);
     }
 
@@ -65,15 +69,24 @@ public class HubService {
     public HubResponse updateHub(UUID hubId, HubPostRequest postRequest) {
         Hub hub = hubRepository.findHub(hubId);
 
+        // manager 확인
         if (hub.getManagerId() != postRequest.managerId()) {
             checkManager(postRequest.managerId());
+        }
+        // parentHub 확인
+        Hub newParentHub = null;
+        UUID newParentHubId = postRequest.parentHubId();
+        if (newParentHubId != null) {
+            Hub curParentHub = hub.getParentHub();
+            newParentHub = curParentHub.getId() != newParentHubId ? hubRepository.findHub(newParentHubId) : curParentHub;
         }
         hub.update(
                 postRequest.name(),
                 postRequest.address(),
                 postRequest.latitude(),
                 postRequest.longitude(),
-                postRequest.managerId()
+                postRequest.managerId(),
+                newParentHub
         );
         return HubResponse.from(hub);
     }
