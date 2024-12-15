@@ -7,10 +7,12 @@ import com.nangman.delivery.application.dto.response.DeliveryResponse;
 import com.nangman.delivery.common.util.AuthorizationUtils;
 import com.nangman.delivery.domain.entity.Delivery;
 import com.nangman.delivery.domain.entity.QDelivery;
+import com.nangman.delivery.domain.entity.Track;
 import com.nangman.delivery.domain.enums.UserRole;
 import com.nangman.delivery.domain.repository.DeliveryRepository;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +26,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final AuthorizationUtils authorizationUtils;
+    private final TrackService trackService;
 
     @Transactional
     public DeliveryResponse createDelivery(DeliveryPostRequest request) {
-        //TODO: Track 생성로직 추가
-        // List<Track> tracks = trackService.createTrack(request.fromHubId(), request.toHubId());
         Delivery delivery = request.toEntity();
-//        delivery.addTracks(tracks);
+        List<Track> tracks = trackService.createTrack(request.fromHubId(), request.toHubId());
+        delivery.addTracks(tracks);
+        Track companyTrack = trackService.createCompanyTrack(request.toHubId(), request.address());
+        delivery.addTrack(companyTrack);
         return DeliveryResponse.from(deliveryRepository.save(delivery));
     }
 
