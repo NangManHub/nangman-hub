@@ -2,6 +2,7 @@ package com.nangman.hub.application.service;
 
 import com.nangman.hub.application.dto.request.RoutePostRequest;
 import com.nangman.hub.application.dto.request.RouteSearchRequest;
+import com.nangman.hub.application.dto.response.RouteDetailResponse;
 import com.nangman.hub.application.dto.response.RouteResponse;
 import com.nangman.hub.domain.entity.Hub;
 import com.nangman.hub.domain.entity.QRoute;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Transactional
@@ -54,6 +57,30 @@ public class RouteService {
     @Transactional(readOnly = true)
     public RouteResponse getRouteById(UUID routeId) {
         return RouteResponse.from(routeRepository.findRoute(routeId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<RouteDetailResponse> getBestRoutes(UUID fromHubId, UUID toHubId) {
+        List<RouteDetailResponse> res = new ArrayList<>();
+
+        Hub fromHub = hubRepository.findHub(fromHubId);
+        Hub nextHub = fromHub.getParentHub();
+        if (nextHub != null) {
+            res.add(RouteDetailResponse.from(routeRepository.findRouteByHub(fromHub.getId(), nextHub.getId())));
+        } else {
+            nextHub = fromHub;
+        }
+
+        Hub toHub = hubRepository.findHub(toHubId);
+        Hub prevHub = toHub.getParentHub();
+        if (prevHub != null) {
+            res.add(RouteDetailResponse.from(routeRepository.findRouteByHub(nextHub.getId(), prevHub.getId())));
+            nextHub = prevHub;
+        }
+
+        res.add(RouteDetailResponse.from(routeRepository.findRouteByHub(nextHub.getId(), toHub.getId())));
+
+        return res;
     }
 
     public RouteResponse updateRoute(UUID routeId, RoutePostRequest postRequest) {

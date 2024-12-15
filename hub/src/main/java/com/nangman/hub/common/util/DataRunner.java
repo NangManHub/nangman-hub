@@ -1,7 +1,9 @@
 //package com.nangman.hub.common.util;
 //
 //import com.nangman.hub.domain.entity.Hub;
+//import com.nangman.hub.domain.entity.Route;
 //import com.nangman.hub.domain.repository.HubRepository;
+//import com.nangman.hub.domain.repository.RouteRepository;
 //import lombok.RequiredArgsConstructor;
 //import org.springframework.boot.ApplicationArguments;
 //import org.springframework.boot.ApplicationRunner;
@@ -15,11 +17,12 @@
 //public class DataRunner implements ApplicationRunner {
 //
 //    private final HubRepository hubRepository;
+//    private final RouteRepository routeRepository;
 //
 //    @Override
 //    public void run(ApplicationArguments args) throws Exception {
+//        // Hub data
 //        // TODO: managerId 실제 데이터로 바꾸기
-//
 //        Hub hubA = new Hub("경기 남부 센터", "경기도 이천시 덕평로 257-21", 37.1896213142136, 127.375050006958, UUID.randomUUID(), null);
 //        Hub hubB = new Hub("대전광역시 센터", "대전 서구 둔산로 100", 36.3503849976553, 127.384633005948, UUID.randomUUID(), null);
 //        Hub hubC = new Hub("대구광역시 센터", "대구 북구 태평로 161", 35.8758849492106, 128.596129208483, UUID.randomUUID(), null);
@@ -43,5 +46,23 @@
 //                new Hub("경상남도 센터", "경남 창원시 의창구 중앙대로 300", 35.2378032514675, 128.691940442146, UUID.randomUUID(), hubC)
 //        );
 //        hubRepository.saveAll(hubList);
+//
+//        // Route data
+//        // TODO: duration, distance 실제 데이터로 바꾸기
+//        List<Route> routeList = new java.util.ArrayList<>(List.of(
+//                new Route(hubA, hubB, 1000, 1000),
+//                new Route(hubB, hubA, 1000, 1000),
+//                new Route(hubB, hubC, 2000, 2000),
+//                new Route(hubC, hubB, 2000, 2000),
+//                new Route(hubC, hubA, 3000, 3000),
+//                new Route(hubA, hubC, 3000, 3000)
+//        ));
+//        int i = 1;
+//        for (Hub hub : hubList) {
+//            routeList.add(new Route(hub, hub.getParentHub(), i, i));
+//            routeList.add(new Route(hub.getParentHub(), hub, i, i));
+//            i++;
+//        }
+//        routeRepository.saveAll(routeList);
 //    }
 //}

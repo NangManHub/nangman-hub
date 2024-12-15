@@ -3,6 +3,7 @@ package com.nangman.hub.presentation;
 import com.nangman.hub.application.dto.UserRole;
 import com.nangman.hub.application.dto.request.RoutePostRequest;
 import com.nangman.hub.application.dto.request.RouteSearchRequest;
+import com.nangman.hub.application.dto.response.RouteDetailResponse;
 import com.nangman.hub.application.dto.response.RouteResponse;
 import com.nangman.hub.application.service.RouteService;
 import com.nangman.hub.common.exception.CustomException;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("hubs/routes")
@@ -36,6 +38,12 @@ public class RouteController {
     public ResponseEntity<Page<RouteResponse>> getRoutes(@ModelAttribute RouteSearchRequest searchRequest,
                                                          @PageableDefault Pageable pageable) {
         return ResponseEntity.ok(routeService.getRoutes(searchRequest, pageable));
+    }
+
+    @GetMapping("best")
+    public ResponseEntity<List<RouteDetailResponse>> getBestRoutes(@RequestParam UUID fromHubId,
+                                                                   @RequestParam UUID toHubId) {
+        return ResponseEntity.ok(routeService.getBestRoutes(fromHubId, toHubId));
     }
 
     @GetMapping("{routeId}")
