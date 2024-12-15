@@ -27,7 +27,7 @@ public record TrackResponse(
                 .deliveryId(track.getDelivery().getId())
                 .trackId(track.getId())
                 .sequence(track.getSequence())
-                .shipperId(track.getShipperId())
+                .shipperId(track.getShipper().getId())
                 .fromHubId(track.getFromHubId())
                 .toHubId(track.getToHubId())
                 .address(track.getAddress())
