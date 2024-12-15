@@ -49,4 +49,9 @@ public class Shipper extends BaseEntity {
     public void delete() {
         super.delete(null);
     }
+
+    public void update(UUID hubId, ShipperType type) {
+        this.hubId = hubId;
+        this.shipperType = type;
+    }
 }
