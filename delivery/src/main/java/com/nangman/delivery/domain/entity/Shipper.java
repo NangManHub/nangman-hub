@@ -39,10 +39,10 @@ public class Shipper {
     private List<Track> tracks;
 
     @Builder
-    private Shipper(UUID id, UUID hubId, Long totalDistance, ShipperType shipperType) {
+    private Shipper(UUID id, UUID hubId, ShipperType shipperType) {
         this.id = id;
         this.hubId = hubId;
-        this.totalDistance = totalDistance;
+        this.totalDistance = 0L;
         this.shipperType = shipperType;
     }
 
