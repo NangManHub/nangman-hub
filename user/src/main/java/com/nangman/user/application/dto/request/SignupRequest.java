@@ -9,13 +9,16 @@ import jakarta.validation.constraints.Pattern;
 
 @Schema(description = "회원가입 요청 DTO")
 public record SignupRequest(
-        // TODO: 아이디, 비밀번호 정규식 추가
         @Schema(description = "로그인 아이디", defaultValue = "user1")
         @NotBlank
-        @Pattern(regexp = "^.{0,10}$", message = "아이디는 최대 10자까지만 가능합니다.")
+        @Pattern(regexp = "^[a-z0-9]{4,10}$", message = "아이디는 4자 이상, 10자 이하의 알파벳 소문자와 숫자로만 구성되어야 합니다.")
         String username,
 
-        @Schema(description = "비밀번호", defaultValue = "password123!")
+        @Schema(description = "비밀번호", defaultValue = "Password123!")
+        @Pattern(
+                regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+=-]).{8,15}$",
+                message = "비밀번호는 8자 이상, 15자 이하의 알파벳 대소문자, 숫자, 특수문자를 포함해야 합니다."
+        )
         @NotBlank String password,
 
         @Schema(description = "이름", defaultValue = "김낭만")
