@@ -19,6 +19,7 @@ public enum ExceptionType {
     ONLY_SHIPPER_REGISTERED(HttpStatus.BAD_REQUEST, "S-001", "SHIPPER로 등록된 사용자만 허용됩니다."),
     SHIPPER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "S-002", "해당 요청의 권한이 없습니다."),
     SHIPPER_NOT_FOUND(HttpStatus.NOT_FOUND, "S-003", "해당하는 Shipper가 없습니다."),
+    SHIPPER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "S-004", "해당하는 Shipper가 이미 등록되어 있습니다."),
 
     HUB_NOT_FOUND(HttpStatus.NOT_FOUND, "H-001", "허브가 존재하지 않습니다.");
 
