@@ -1,18 +1,23 @@
 package com.nangman.order.application.service;
 
 import com.nangman.order.application.dto.CompanyDto;
+import com.nangman.order.application.dto.OrderDto;
 import com.nangman.order.application.dto.OrderEvent;
 import com.nangman.order.application.dto.request.OrderPostRequest;
 import com.nangman.order.application.dto.request.OrderPutRequest;
 import com.nangman.order.application.dto.response.OrderGetResponse;
 import com.nangman.order.application.dto.response.OrderPostResponse;
+import com.nangman.order.application.dto.response.OrderSearchGetResponse;
 import com.nangman.order.common.feign.CompanyClient;
 import com.nangman.order.common.util.AuthorizationUtils;
 import com.nangman.order.common.util.KafkaProducer;
 import com.nangman.order.domain.entity.Order;
+import com.nangman.order.domain.repository.OrderQueryRepository;
 import com.nangman.order.domain.repository.OrderRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
     private final CompanyClient companyClient;
     private final KafkaProducer kafkaProducer;
     private final AuthorizationUtils authorizationUtils;
@@ -79,5 +85,10 @@ public class OrderService {
         Order order = orderRepository.getById(orderId);
         authorizationUtils.validateHubManager(order.getReceiverId());
         order.updateIsDeleted(authorizationUtils.getUserIdFromAuthentication());
+    }
+
+    public OrderSearchGetResponse searchOrder(UUID supplierId, UUID receiverId, UUID productId, Integer productQuantity, String requestMessage, Pageable pageable) {
+        Page<OrderDto> searchOrderList = orderQueryRepository.searchOrder(supplierId, receiverId, productId, productQuantity, requestMessage, pageable);
+        return OrderSearchGetResponse.from(searchOrderList);
     }
 }

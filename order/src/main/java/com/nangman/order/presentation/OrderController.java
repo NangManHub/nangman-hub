@@ -4,11 +4,15 @@ import com.nangman.order.application.dto.request.OrderPostRequest;
 import com.nangman.order.application.dto.request.OrderPutRequest;
 import com.nangman.order.application.dto.response.OrderGetResponse;
 import com.nangman.order.application.dto.response.OrderPostResponse;
+import com.nangman.order.application.dto.response.OrderSearchGetResponse;
 import com.nangman.order.application.service.OrderService;
 import com.nangman.order.common.interceptor.Auth;
 import com.nangman.order.domain.enums.UserRole;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -50,6 +55,16 @@ public class OrderController {
     public ResponseEntity<Void> deleteOrder(@PathVariable UUID orderId) {
         orderService.deleteOrder(orderId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<OrderSearchGetResponse> searchOrder(@RequestParam(required = false) UUID supplierId,
+                                                              @RequestParam(required = false) UUID receiverId,
+                                                              @RequestParam(required = false) UUID productId,
+                                                              @RequestParam(required = false) Integer productQuantity,
+                                                              @RequestParam(required = false) String requestMessage,
+                                                              @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(orderService.searchOrder(supplierId, receiverId, productId, productQuantity, requestMessage, pageable));
     }
 
 }
