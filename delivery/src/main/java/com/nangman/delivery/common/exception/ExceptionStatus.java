@@ -18,7 +18,10 @@ public enum ExceptionStatus {
     SHIPPER_NOT_FOUND(HttpStatus.NOT_FOUND, "s001", "해당 배송원을 찾을 수 없습니다."),
 
     //AUTHORIZATION
-    AUTHORIZATION_FAILED(HttpStatus.FORBIDDEN, "a001", "권한이 없습니다."), ;
+    AUTHORIZATION_FAILED(HttpStatus.FORBIDDEN, "a001", "권한이 없습니다."),
+
+    //HUB
+    HUB_SERVER_ERROR(HttpStatus.NOT_FOUND, "h001", "허브정보를 받아올 수 없습니다. 다시 시도해주세요.");
 
     private final int status;
     private final String customCode;
