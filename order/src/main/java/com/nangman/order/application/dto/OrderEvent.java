@@ -4,15 +4,18 @@ import com.nangman.order.domain.entity.Order;
 import java.util.UUID;
 
 public record OrderEvent(
-        UUID orderId,
-        UUID supplierId,
-        UUID receiverId
+        UUID fromHubId,
+        UUID toHubId,
+        String address,
+        UUID agentId,
+        UUID orderId
 ) {
-    public static OrderEvent from(Order order) {
+    public static OrderEvent from(Order order, CompanyDto supplier, CompanyDto receiver) {
         return new OrderEvent(
-                order.getId(),
-                order.getSupplierId(),
-                order.getReceiverId()
-        );
+                supplier.hubId(),
+                receiver.hubId(),
+                receiver.address(),
+                receiver.agentId(),
+                order.getId());
     }
 }
