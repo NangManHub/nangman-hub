@@ -1,0 +1,31 @@
+server:
+  port: 19095
+spring:
+  application:
+    name: hub
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/nangmanhub
+    username: postgres
+    password: admin1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+management:
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
+  tracing:
+    sampling:
+      probability: 1.0
