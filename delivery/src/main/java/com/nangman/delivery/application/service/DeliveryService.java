@@ -27,7 +27,11 @@ public class DeliveryService {
 
     @Transactional
     public DeliveryResponse createDelivery(DeliveryPostRequest request) {
-        return DeliveryResponse.from(deliveryRepository.save(request.toEntity()));
+        //TODO: Track 생성로직 추가
+        // List<Track> tracks = trackService.createTrack(request.fromHubId(), request.toHubId());
+        Delivery delivery = request.toEntity();
+//        delivery.addTracks(tracks);
+        return DeliveryResponse.from(deliveryRepository.save(delivery));
     }
 
     @Transactional(readOnly = true)
