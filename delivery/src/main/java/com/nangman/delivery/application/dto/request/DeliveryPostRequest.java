@@ -10,21 +10,17 @@ public record DeliveryPostRequest(
         @NotNull UUID toHubId,
         @NotNull String address,
         @NotNull UUID recipient,
-        @NotNull UUID orderId,
-        @NotNull List<TrackPostRequest> tracks
+        @NotNull UUID orderId
 ) {
 
     public Delivery toEntity() {
-        Delivery delivery = Delivery.builder()
+        return Delivery.builder()
                 .fromHubId(fromHubId)
                 .toHubId(toHubId)
                 .address(address)
                 .recipient(recipient)
                 .orderId(orderId)
                 .build();
-
-        delivery.addTracks(tracks.stream().map(track -> track.toEntity(delivery)).toList());
-
-        return delivery;
     }
+
 }
