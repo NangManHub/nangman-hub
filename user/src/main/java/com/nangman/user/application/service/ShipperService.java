@@ -1,6 +1,7 @@
 package com.nangman.user.application.service;
 
 import com.nangman.user.application.dto.HubDto;
+import com.nangman.user.application.dto.kafka.ActionType;
 import com.nangman.user.application.dto.kafka.ShipperEvent;
 import com.nangman.user.application.dto.kafka.ShipperMessage;
 import com.nangman.user.application.dto.request.ShipperPostRequest;
@@ -43,7 +44,7 @@ public class ShipperService {
 
         Shipper savedShipper = shipperRepository.save(shipperPostRequest.toEntity(shipper));
 
-        eventPublisher.publishEvent(new ShipperEvent(savedShipper.getId(), ShipperMessage.of("create", savedShipper)));
+        eventPublisher.publishEvent(new ShipperEvent(savedShipper.getId(), ShipperMessage.of(ActionType.CREATE, savedShipper)));
 
         return ShipperPostResponse.from(savedShipper);
     }
@@ -59,7 +60,7 @@ public class ShipperService {
 
         shipper.update(shipperPutRequest.hubId(), shipperPutRequest.type());
         
-        eventPublisher.publishEvent(new ShipperEvent(shipper.getId(), ShipperMessage.of("update", shipper)));
+        eventPublisher.publishEvent(new ShipperEvent(shipper.getId(), ShipperMessage.of(ActionType.UPDATE, shipper)));
 
         return ShipperPutResponse.from(shipper);
     }
@@ -72,7 +73,7 @@ public class ShipperService {
 
         shipper.delete(reqUserId);
 
-        eventPublisher.publishEvent(new ShipperEvent(shipper.getId(), ShipperMessage.of("delete", shipper)));
+        eventPublisher.publishEvent(new ShipperEvent(shipper.getId(), ShipperMessage.of(ActionType.DELETE, shipper)));
     }
 
     private void verifyRole(UUID reqUserId, UUID hubId){
