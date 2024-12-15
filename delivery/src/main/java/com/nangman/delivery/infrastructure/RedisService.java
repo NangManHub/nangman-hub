@@ -12,19 +12,20 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RedisService {
 
-    private final ZSetOperations<String, UUID> zSetOperations;
+    private final ZSetOperations<String, String> zSetOperations;
 
     public void addShipperZSet(Shipper shipper, double score) {
-        zSetOperations.add(generateKey(shipper.getShipperType(), shipper.getHubId()), shipper.getId(), score);
+        zSetOperations.add(generateKey(shipper.getShipperType(), shipper.getHubId()), shipper.getId().toString(), score);
     }
 
-    public UUID getShipperZSet(Shipper shipper, long distance) {
-        String key = generateKey(shipper.getShipperType(), shipper.getHubId());
-        Set<UUID> shippers = zSetOperations.rangeByScore(key, Long.MIN_VALUE, Long.MAX_VALUE, 0, 1);
+    public UUID getShipperZSet(ShipperType shipperType, UUID hubId, long distance) {
+        String key = generateKey(shipperType, hubId);
+        Set<String> shippers = zSetOperations.rangeByScore(key, Long.MIN_VALUE, Long.MAX_VALUE, 0, 1);
 
         if (shippers != null && !shippers.isEmpty()) {
-            UUID shipperId = shippers.iterator().next();
-            zSetOperations.incrementScore(key, shipperId, distance);
+            String shipperIdString = shippers.iterator().next();
+            UUID shipperId = UUID.fromString(shipperIdString);
+            zSetOperations.incrementScore(key, shipperIdString, distance);
             return shipperId;
         }
         return null;
@@ -32,7 +33,7 @@ public class RedisService {
 
     public void completeTask(Shipper shipper, long distance) {
         String key = generateKey(shipper.getShipperType(), shipper.getHubId());
-        zSetOperations.incrementScore(key, shipper.getId(), -distance);
+        zSetOperations.incrementScore(key, shipper.getId().toString(), -distance);
     }
 
     public void deleteShipperZSet(Shipper shipper) {

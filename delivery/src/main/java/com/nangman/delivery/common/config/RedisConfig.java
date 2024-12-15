@@ -12,20 +12,20 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<String, UUID> shipperRedisTemplate(
+    public RedisTemplate<String, String> shipperRedisTemplate(
             RedisConnectionFactory redisConnectionFactory) {
         //TODO: UUID -> ShipperDto 로 변경
-        RedisTemplate<String, UUID> redisTemplate = new RedisTemplate<>();
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(RedisSerializer.string());
         // TODO: JAVA로 변경
-        redisTemplate.setValueSerializer(RedisSerializer.json());
+        redisTemplate.setValueSerializer(RedisSerializer.string());
         return redisTemplate;
     }
 
     @Bean
-    ZSetOperations<String, UUID> shipperZSetOperations(
-            RedisTemplate<String, UUID> shipperRedisTemplate) {
+    ZSetOperations<String, String> shipperZSetOperations(
+            RedisTemplate<String, String> shipperRedisTemplate) {
         return shipperRedisTemplate.opsForZSet();
     }
 }
