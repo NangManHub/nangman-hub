@@ -52,6 +52,9 @@ public class KafkaConfig {
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, UUIDDeserializer.class);
         // 메시지 값의 디시리얼라이저 클래스를 설정합니다.
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        configProps.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+        configProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, ShipperMessage.class.getName());
+
         // 설정된 프로퍼티로 DefaultKafkaConsumerFactory를 생성하여 반환합니다.
         return new DefaultKafkaConsumerFactory<>(configProps);
     }
