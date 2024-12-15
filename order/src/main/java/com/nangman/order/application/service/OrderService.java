@@ -1,16 +1,16 @@
 package com.nangman.order.application.service;
 
 import com.nangman.order.application.dto.CompanyDto;
-import com.nangman.order.application.dto.HubDto;
 import com.nangman.order.application.dto.OrderEvent;
 import com.nangman.order.application.dto.request.OrderPostRequest;
+import com.nangman.order.application.dto.response.OrderGetResponse;
 import com.nangman.order.application.dto.response.OrderPostResponse;
 import com.nangman.order.common.feign.CompanyClient;
-import com.nangman.order.common.feign.HubClient;
 import com.nangman.order.common.util.AuthorizationUtils;
 import com.nangman.order.common.util.KafkaProducer;
 import com.nangman.order.domain.entity.Order;
 import com.nangman.order.domain.repository.OrderRepository;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,6 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final CompanyClient companyClient;
-    private final HubClient hubClient;
     private final KafkaProducer kafkaProducer;
     private final AuthorizationUtils authorizationUtils;
 
@@ -40,6 +39,18 @@ public class OrderService {
         kafkaProducer.sendMessage("order.create-success", order.getId().toString(), OrderEvent.from(order, fromCompany, toCompany));
 
         return OrderPostResponse.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderGetResponse getOrder(UUID orderId) {
+        Order order = orderRepository.getById(orderId);
+        CompanyDto companyDto = companyClient.getCompanyById(order.getReceiverId());
+        authorizationUtils.validateHubManager(companyDto.hubId());
+        // TODO: Delivery 생성 후 SHIPPER 권한 확인 테스트 필요
+        // authorizationUtils.validateDeliveryShipper(order.getDeliveryId());
+        authorizationUtils.validateCompanyAgent(companyDto.agentId());
+
+        return OrderGetResponse.from(order);
     }
 
 }
