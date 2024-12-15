@@ -1,5 +1,6 @@
 package com.nangman.company.presentation;
 
+import com.nangman.company.application.dto.response.ProductPatchResponse;
 import com.nangman.company.application.dto.response.ProductSearchGetResponse;
 import com.nangman.company.application.dto.request.ProductPostRequest;
 import com.nangman.company.application.dto.response.ProductGetResponse;
@@ -64,6 +65,12 @@ public class ProductController {
                                                                   @RequestParam(required = false) Integer quantity,
                                                                   @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(productService.searchProduct(name, hubId, companyId, quantity, pageable));
+    }
+
+    @PutMapping("/quantity/{productId}")
+    public ResponseEntity<ProductPatchResponse> checkProductQuantity(@PathVariable UUID productId,
+                                                                     @RequestParam Integer quantity) {
+        return ResponseEntity.ok(productService.checkProductQuantity(productId, quantity));
     }
 
 }
