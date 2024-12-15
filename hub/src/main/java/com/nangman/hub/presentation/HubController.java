@@ -1,17 +1,17 @@
 package com.nangman.hub.presentation;
 
-import com.nangman.hub.application.dto.HubPostRequest;
-import com.nangman.hub.application.dto.HubResponse;
-import com.nangman.hub.application.dto.HubSearchRequest;
+import com.nangman.hub.application.dto.request.HubPostRequest;
+import com.nangman.hub.application.dto.response.HubResponse;
+import com.nangman.hub.application.dto.request.HubSearchRequest;
 import com.nangman.hub.application.dto.UserRole;
 import com.nangman.hub.application.service.HubService;
 import com.nangman.hub.common.exception.CustomException;
 import com.nangman.hub.common.exception.ExceptionCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +33,9 @@ public class HubController {
     }
 
     @GetMapping
-    public ResponseEntity<PagedModel<HubResponse>> getHubs(HubSearchRequest searchRequest,
-                                                           @PageableDefault Pageable pageable) {
-        return ResponseEntity.ok(new PagedModel<>(hubService.getHubs(searchRequest, pageable)));
+    public ResponseEntity<Page<HubResponse>> getHubs(@ModelAttribute HubSearchRequest searchRequest,
+                                                     @PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(hubService.getHubs(searchRequest, pageable));
     }
 
     @GetMapping("{hubId}")
