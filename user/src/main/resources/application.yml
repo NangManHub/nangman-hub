@@ -52,8 +52,6 @@ springdoc:
     disable-swagger-default-url: true
   paths-to-match: # 문서화 적용할 API 경로 지정
     - /**
-#  paths-to-exclude: # 문서화 제외할 API 경로 지정
-#    - /auth/**
 
 management:
   zipkin:
