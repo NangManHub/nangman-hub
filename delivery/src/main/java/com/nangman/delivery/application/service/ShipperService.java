@@ -1,6 +1,7 @@
 package com.nangman.delivery.application.service;
 
 import com.nangman.delivery.application.dto.kafka.ShipperMessage;
+import com.nangman.delivery.domain.entity.Shipper;
 import com.nangman.delivery.domain.repository.ShipperRepository;
 import com.nangman.delivery.domain.service.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ public class ShipperService {
     }
 
     public void deleteShipper(ShipperMessage shipperMessage) {
-        shipperRepository.deleteById(shipperMessage.userId());
+        Shipper shipper = shipperRepository.getById(shipperMessage.userId());
+
+        shipper.delete();
     }
 }
