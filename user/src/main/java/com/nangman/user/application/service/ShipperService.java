@@ -1,6 +1,9 @@
 package com.nangman.user.application.service;
 
 import com.nangman.user.application.dto.HubDto;
+import com.nangman.user.application.dto.kafka.ActionType;
+import com.nangman.user.application.dto.kafka.ShipperEvent;
+import com.nangman.user.application.dto.kafka.ShipperMessage;
 import com.nangman.user.application.dto.request.ShipperPostRequest;
 import com.nangman.user.application.dto.request.ShipperPutRequest;
 import com.nangman.user.application.dto.response.ShipperPostResponse;
@@ -15,6 +18,7 @@ import com.nangman.user.domain.repository.ShipperRepository;
 import com.nangman.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,7 @@ public class ShipperService {
     private final UserRepository userRepository;
     private final ShipperRepository shipperRepository;
     private final HubClient hubClient;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public ShipperPostResponse createShipper(UUID reqUserId, ShipperPostRequest shipperPostRequest) {
@@ -38,6 +43,9 @@ public class ShipperService {
         if(shipper.getRole() != UserRole.SHIPPER) throw new CustomException(ExceptionType.ONLY_SHIPPER_REGISTERED);
 
         Shipper savedShipper = shipperRepository.save(shipperPostRequest.toEntity(shipper));
+
+        eventPublisher.publishEvent(new ShipperEvent(savedShipper.getId(), ShipperMessage.of(ActionType.CREATE, savedShipper)));
+
         return ShipperPostResponse.from(savedShipper);
     }
 
@@ -51,6 +59,8 @@ public class ShipperService {
         hubClient.getHub(shipperPutRequest.hubId());
 
         shipper.update(shipperPutRequest.hubId(), shipperPutRequest.type());
+        
+        eventPublisher.publishEvent(new ShipperEvent(shipper.getId(), ShipperMessage.of(ActionType.UPDATE, shipper)));
 
         return ShipperPutResponse.from(shipper);
     }
@@ -62,6 +72,8 @@ public class ShipperService {
         verifyRole(reqUserId, shipper.getHubId());
 
         shipper.delete(reqUserId);
+
+        eventPublisher.publishEvent(new ShipperEvent(shipper.getId(), ShipperMessage.of(ActionType.DELETE, shipper)));
     }
 
     private void verifyRole(UUID reqUserId, UUID hubId){
