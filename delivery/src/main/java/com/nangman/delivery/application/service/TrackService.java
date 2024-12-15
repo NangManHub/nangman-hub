@@ -11,6 +11,7 @@ import com.nangman.delivery.domain.entity.Track;
 import com.nangman.delivery.domain.enums.UserRole;
 import com.nangman.delivery.domain.repository.ShipperRepository;
 import com.nangman.delivery.domain.repository.TrackRepository;
+import com.nangman.delivery.infrastructure.RedisService;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import java.util.Objects;
@@ -27,6 +28,7 @@ public class TrackService {
     private final TrackRepository trackRepository;
     private final ShipperRepository shipperRepository;
     private final AuthorizationUtils authorizationUtils;
+    private final RedisService redisService;
 
     @Transactional
     public TrackResponse updateTrack(UUID trackId, TrackPutRequest request) {
@@ -50,6 +52,7 @@ public class TrackService {
         Track track = trackRepository.getById(trackId);
 
         track.complete(request.actualDistance());
+        redisService.completeTask(track.getShipper(), track.getExpectDistance());
 
         return TrackResponse.from(track);
     }
