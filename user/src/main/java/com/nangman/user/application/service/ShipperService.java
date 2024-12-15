@@ -42,7 +42,7 @@ public class ShipperService {
         User shipper = userRepository.findUser(shipperPostRequest.userId());
         if(shipper.getRole() != UserRole.SHIPPER) throw new CustomException(ExceptionType.ONLY_SHIPPER_REGISTERED);
 
-        if(shipperRepository.findByIdAndIsDeletedFalse(shipperPostRequest.userId()).isPresent()) throw new CustomException(ExceptionType.SHIPPER_ALREADY_EXISTS);
+        if(shipperRepository.findById(shipperPostRequest.userId()).isPresent()) throw new CustomException(ExceptionType.SHIPPER_ALREADY_EXISTS);
 
         Shipper savedShipper = shipperRepository.save(shipperPostRequest.toEntity(shipper));
 
