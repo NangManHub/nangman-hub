@@ -69,9 +69,12 @@ public class Track extends BaseEntity {
     @Column(name = "departure_time")
     private Date departureTime;
 
+    @Column(name = "route_id", nullable = false)
+    private UUID routeId;
+
     @Builder
     public Track(Delivery delivery, Integer sequence, Shipper shipper, UUID fromHubId, UUID toHubId, String address,
-                 Integer expectDistance, Integer expectTime) {
+                 Integer expectDistance, Integer expectTime, UUID routeId) {
         this.delivery = delivery;
         this.sequence = sequence;
         this.shipper = shipper;
@@ -81,6 +84,7 @@ public class Track extends BaseEntity {
         this.expectDistance = expectDistance;
         this.expectTime = expectTime;
         this.status = TrackStatus.WAITING;
+        this.routeId = routeId;
     }
 
     public void update(Integer sequence, Shipper shipper, UUID fromHubId, UUID toHubId, String address, Integer expectDistance,
@@ -113,5 +117,9 @@ public class Track extends BaseEntity {
         this.actualDistance = actualDistance;
         this.actualTime = (int) Duration.between(departureTime.toInstant(), new Date().toInstant()).toMinutes();
         this.status = TrackStatus.ARRIVE;
+    }
+
+    public void updateDelivery(Delivery delivery) {
+        this.delivery = delivery;
     }
 }
