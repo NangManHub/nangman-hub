@@ -93,6 +93,7 @@ public class Delivery extends BaseEntity {
                 throw new DomainException(ExceptionStatus.TRACK_SEQUENCE_DUPLICATED);
             }
             sequences.add(track.getSequence());
+            track.updateDelivery(this);
         });
         this.tracks.addAll(tracks);
     }
