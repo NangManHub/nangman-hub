@@ -1,5 +1,6 @@
 package com.nangman.delivery.application.service;
 
+import com.nangman.delivery.application.dto.feign.RouteDetailResponse;
 import com.nangman.delivery.application.dto.request.TrackCompletionPatchRequest;
 import com.nangman.delivery.application.dto.request.TrackPutRequest;
 import com.nangman.delivery.application.dto.request.TrackSearchRequest;
@@ -8,14 +9,19 @@ import com.nangman.delivery.common.util.AuthorizationUtils;
 import com.nangman.delivery.domain.entity.QTrack;
 import com.nangman.delivery.domain.entity.Shipper;
 import com.nangman.delivery.domain.entity.Track;
+import com.nangman.delivery.domain.enums.ShipperType;
 import com.nangman.delivery.domain.enums.UserRole;
 import com.nangman.delivery.domain.repository.ShipperRepository;
 import com.nangman.delivery.domain.repository.TrackRepository;
+import com.nangman.delivery.infrastructure.HubClient;
 import com.nangman.delivery.infrastructure.RedisService;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +35,7 @@ public class TrackService {
     private final ShipperRepository shipperRepository;
     private final AuthorizationUtils authorizationUtils;
     private final RedisService redisService;
+    private final HubClient hubClient;
 
     @Transactional
     public TrackResponse updateTrack(UUID trackId, TrackPutRequest request) {
@@ -106,5 +113,40 @@ public class TrackService {
 //            return Qtrack.track.shipperId.eq(userId);
 //        }
         return null;
+    }
+
+    public List<Track> createTrack(@NotNull UUID fromHubId, @NotNull UUID toHubId) {
+        List<RouteDetailResponse> routeDetailResponses = hubClient.getRouts(fromHubId, toHubId);
+        AtomicReference<Integer> sequence = new AtomicReference<>(1);
+
+        return routeDetailResponses.stream()
+                .map(routeDetailResponse -> {
+                    boolean isCenter = routeDetailResponse.toHub().parentHubId() == null;
+                    UUID shipperId = redisService.getShipperZSet(ShipperType.HUB, isCenter ? routeDetailResponse.toHub().hubId() : routeDetailResponse.toHub().parentHubId(), routeDetailResponse.distance());
+                    Shipper shipper = shipperRepository.getById(shipperId);
+                    return Track.builder()
+                            .sequence(sequence.getAndSet(sequence.get() + 1))
+                            .shipper(shipper)
+                            .fromHubId(fromHubId)
+                            .toHubId(toHubId)
+                            .expectDistance(routeDetailResponse.distance())
+                            .expectTime(routeDetailResponse.duration())
+                            .routeId(routeDetailResponse.routeId())
+                            .build();
+                })
+                .toList();
+        //TODO: Company 배송 생성
+    }
+
+    public Track createCompanyTrack(@NotNull UUID hubId, @NotNull String address) {
+        Shipper shipper = shipperRepository.getById(redisService.getShipperZSet(ShipperType.COMPANY, hubId, 0));
+        return Track.builder()
+                .sequence(1)
+                .shipper(shipper)
+                .fromHubId(hubId)
+                .address(address)
+                .expectDistance(0)
+                .expectTime(0)
+                .build();
     }
 }
