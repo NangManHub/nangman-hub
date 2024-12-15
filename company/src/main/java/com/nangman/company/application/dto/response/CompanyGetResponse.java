@@ -1,7 +1,5 @@
 package com.nangman.company.application.dto.response;
 
-import com.nangman.company.application.dto.HubDto;
-import com.nangman.company.application.dto.UserDto;
 import com.nangman.company.domain.entity.Company;
 import com.nangman.company.domain.enums.CompanyType;
 import java.util.UUID;
@@ -9,17 +7,17 @@ import java.util.UUID;
 public record CompanyGetResponse(
         UUID companyId,
         String name,
-        HubDto hub,
+        UUID hubId,
         CompanyType type,
-        UserDto agent
+        UUID agentId
 ) {
-    public static CompanyGetResponse of(Company company, HubDto hub, UserDto agent) {
+    public static CompanyGetResponse from(Company company) {
         return new CompanyGetResponse(
                 company.getId(),
                 company.getName(),
-                hub,
+                company.getHubId(),
                 company.getType(),
-                agent
+                company.getAgentId()
         );
     }
 }

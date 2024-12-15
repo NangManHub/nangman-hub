@@ -1,11 +1,9 @@
-package com.nangman.company.application.dto;
+package com.nangman.user.application.dto;
 
 import java.util.UUID;
 
 public record HubDto(
         UUID hubId,
-        String name,
-        String address,
         UUID managerId
 ) {
 }
