@@ -1,12 +1,10 @@
 package com.nangman.delivery.infrastructure;
 
+import com.nangman.delivery.application.dto.kafka.ActionType;
 import com.nangman.delivery.application.dto.kafka.ShipperMessage;
 import com.nangman.delivery.application.service.ShipperService;
 import com.nangman.delivery.common.exception.ExceptionStatus;
 import com.nangman.delivery.common.exception.InfraStructureException;
-import com.nangman.delivery.domain.repository.ShipperRepository;
-import java.util.Objects;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -18,21 +16,23 @@ public class KafkaConsumerService {
     private final ShipperService shipperService;
 
     @KafkaListener(topics = "user.shipper.events", groupId = "delivery-shipper-id")
-    public void consumeShipperEvent(UUID key, ShipperMessage message) {
-        System.out.println("Consumed message: " + message);
+    public void consumeShipperEvent(ShipperMessage message) {
 
-        switch (message.action()) {
-            case "create":
-                shipperService.addShipper(message);
-                break;
-            case "update":
-                shipperService.updateShipper(message);
-                break;
-            case "delete":
-                shipperService.deleteShipper(message);
-                break;
-            default:
-                throw new InfraStructureException(ExceptionStatus.SHIPPER_MESSAGE_INVALID_ACTION);
+        try {
+            switch (ActionType.valueOf(message.action())) {
+                case CREATE:
+                    shipperService.addShipper(message);
+                    break;
+                case UPDATE:
+                    shipperService.updateShipper(message);
+                    break;
+                case DELETE:
+                    shipperService.deleteShipper(message);
+                    break;
+                default:
+            }
+        } catch (IllegalArgumentException e) {
+            throw new InfraStructureException(ExceptionStatus.SHIPPER_MESSAGE_INVALID_ACTION);
         }
     }
 }
