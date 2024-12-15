@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface HubClient {
 
     @CircuitBreaker(name = "hubClient", fallbackMethod = "fallbackGetHubById")
-    @GetMapping("/hubs/{id}")
-    HubDto getHubById(@PathVariable UUID id);
+    @GetMapping("/hubs/{hubId}")
+    HubDto getHubById(@PathVariable UUID hubId);
 
     @CircuitBreaker(name = "hubClient", fallbackMethod = "fallbackGetHubByManagerId")
     @GetMapping("/hubs")
     PagedModel<HubDto> getHubByManagerId(@RequestParam UUID managerId);
 
-    default HubDto fallbackGetHubById(UUID id, Throwable throwable) {
+    default HubDto fallbackGetHubById(UUID hubId, Throwable throwable) {
         throw new HubNotFoundException();
     }
 
