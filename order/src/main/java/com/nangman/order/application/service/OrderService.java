@@ -73,4 +73,11 @@ public class OrderService {
 
         return OrderGetResponse.from(order);
     }
+
+    @Transactional
+    public void deleteOrder(UUID orderId) {
+        Order order = orderRepository.getById(orderId);
+        authorizationUtils.validateHubManager(order.getReceiverId());
+        order.updateIsDeleted(authorizationUtils.getUserIdFromAuthentication());
+    }
 }
