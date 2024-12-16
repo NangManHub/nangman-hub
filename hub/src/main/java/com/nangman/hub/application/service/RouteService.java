@@ -6,6 +6,7 @@ import com.nangman.hub.application.dto.request.RouteSearchRequest;
 import com.nangman.hub.application.dto.response.NaverRouteResponse;
 import com.nangman.hub.application.dto.response.RouteDetailResponse;
 import com.nangman.hub.application.dto.response.RouteResponse;
+import com.nangman.hub.common.util.RestPage;
 import com.nangman.hub.domain.entity.Hub;
 import com.nangman.hub.domain.entity.QRoute;
 import com.nangman.hub.domain.entity.Route;
@@ -13,7 +14,10 @@ import com.nangman.hub.domain.repository.HubRepository;
 import com.nangman.hub.domain.repository.RouteRepository;
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +35,7 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final HubRepository hubRepository;
 
+    @CacheEvict(cacheNames = "searchRoute", allEntries = true)
     public RouteResponse createRoute(RoutePostRequest postRequest) {
         Hub fromHub = hubRepository.findHub(postRequest.fromHubId());
         Hub toHub = hubRepository.findHub(postRequest.toHubId());
@@ -38,6 +43,7 @@ public class RouteService {
         return RouteResponse.from(route);
     }
 
+    @CacheEvict(cacheNames = "searchRoute", allEntries = true)
     public void createRouteWithHub(Hub fromHub, Hub toHub) {
         List<NaverRouteResponse> directions = naverService.getBiDirections(
                 new NaverRouteRequest(fromHub.getLatitude(), fromHub.getLongitude()),
@@ -49,8 +55,9 @@ public class RouteService {
         ));
     }
 
+    @Cacheable(cacheNames = "searchRoute", key = "{ args[0], args[1].pageNumber, args[1].pageSize }")
     @Transactional(readOnly = true)
-    public Page<RouteResponse> getRoutes(RouteSearchRequest searchRequest, Pageable pageable) {
+    public RestPage<RouteResponse> getRoutes(RouteSearchRequest searchRequest, Pageable pageable) {
         BooleanBuilder qBuilder = new BooleanBuilder();
         qBuilder.and(QRoute.route.isDelete.isFalse());
         if (searchRequest.fromHubId() != null) {
@@ -65,14 +72,16 @@ public class RouteService {
         if (searchRequest.duration() != null) {
             qBuilder.and(QRoute.route.duration.goe(searchRequest.duration()));
         }
-        return routeRepository.findAll(qBuilder, pageable).map(RouteResponse::from);
+        return new RestPage<>(routeRepository.findAll(qBuilder, pageable).map(RouteResponse::from));
     }
 
+    @Cacheable(cacheNames = "route", key = "{ args[0] }")
     @Transactional(readOnly = true)
     public RouteResponse getRouteById(UUID routeId) {
         return RouteResponse.from(routeRepository.findRoute(routeId));
     }
 
+    @Cacheable(cacheNames = "bestRoute", key = "{ args[0], args[1] }")
     @Transactional(readOnly = true)
     public List<RouteDetailResponse> getBestRoutes(UUID fromHubId, UUID toHubId) {
         List<RouteDetailResponse> res = new ArrayList<>();
@@ -97,6 +106,11 @@ public class RouteService {
         return res;
     }
 
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "searchRoute", allEntries = true),
+            @CacheEvict(cacheNames = "bestRoute", allEntries = true)
+    })
+    @CachePut(cacheNames = "route", key = "{ args[0] }")
     public RouteResponse updateRoute(UUID routeId, RoutePostRequest postRequest) {
         Route route = routeRepository.findRoute(routeId);
 
@@ -113,6 +127,11 @@ public class RouteService {
         return RouteResponse.from(route);
     }
 
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "searchRoute", allEntries = true),
+            @CacheEvict(cacheNames = "bestRoute", allEntries = true),
+            @CacheEvict(cacheNames = "route", key = "{ args[0] }")
+    })
     public void deleteRoute(UUID routeId, UUID userId) {
         Route route = routeRepository.findRoute(routeId);
         route.delete(userId);
