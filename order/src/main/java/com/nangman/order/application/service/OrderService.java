@@ -3,6 +3,7 @@ package com.nangman.order.application.service;
 import com.nangman.order.application.dto.CompanyDto;
 import com.nangman.order.application.dto.OrderDto;
 import com.nangman.order.application.dto.ProductDto;
+import com.nangman.order.application.dto.event.DeliveryEvent;
 import com.nangman.order.application.dto.event.OrderEvent;
 import com.nangman.order.application.dto.request.OrderPostRequest;
 import com.nangman.order.application.dto.request.OrderPutRequest;
@@ -20,6 +21,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,4 +101,12 @@ public class OrderService {
         ProductDto productDto = companyClient.getProductById(order.getProductId());
         return OrderDetailGetResponse.of(order, productDto);
     }
+
+    @KafkaListener(topics = "delivery.create-success", groupId = "order", containerFactory = "kafkaDeliveryEventContainerFactory")
+    @Transactional
+    public void updateDeliveryId(DeliveryEvent deliveryEvent) {
+        Order order = orderRepository.getById(deliveryEvent.orderId());
+        order.updateDeliveryId(deliveryEvent.id());
+    }
+    
 }
