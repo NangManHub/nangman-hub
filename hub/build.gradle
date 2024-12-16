@@ -29,6 +29,9 @@ ext {
 }
 
 dependencies {
+	// json
+	implementation 'org.json:json:20231013'
+
 	implementation "com.querydsl:querydsl-jpa:${querydslVersion}:jakarta"
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'

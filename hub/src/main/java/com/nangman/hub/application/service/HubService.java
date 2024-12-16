@@ -1,9 +1,9 @@
 package com.nangman.hub.application.service;
 
-import com.nangman.hub.application.dto.request.HubPostRequest;
-import com.nangman.hub.application.dto.response.HubResponse;
-import com.nangman.hub.application.dto.request.HubSearchRequest;
 import com.nangman.hub.application.dto.UserResponse;
+import com.nangman.hub.application.dto.request.HubPostRequest;
+import com.nangman.hub.application.dto.request.HubSearchRequest;
+import com.nangman.hub.application.dto.response.HubResponse;
 import com.nangman.hub.common.exception.CustomException;
 import com.nangman.hub.common.exception.ExceptionCode;
 import com.nangman.hub.domain.entity.Hub;
@@ -26,6 +26,7 @@ import java.util.UUID;
 public class HubService {
 
     private final HubRepository hubRepository;
+    private final RouteService routeService;
     private final UserService userService;
 
     public HubResponse createHub(HubPostRequest postRequest) {
@@ -33,6 +34,17 @@ public class HubService {
 
         Hub parentHub = postRequest.parentHubId() != null ? hubRepository.findHub(postRequest.parentHubId()) : null;
         Hub hub = hubRepository.save(postRequest.toEntity(parentHub));
+
+        // create routes
+        if (parentHub != null) {
+            // hub <-> central hub
+            routeService.createRouteWithHub(hub, parentHub);
+        } else {
+            // hub <-> other central hubs
+            hubRepository.findAllByParentHubIdIsNullAndIdNotAndIsDeleteFalse(hub.getId())
+                    .forEach(otherHub -> routeService.createRouteWithHub(hub, otherHub));
+        }
+
         return HubResponse.from(hub);
     }
 

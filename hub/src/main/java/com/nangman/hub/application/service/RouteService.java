@@ -1,7 +1,9 @@
 package com.nangman.hub.application.service;
 
+import com.nangman.hub.application.dto.request.NaverRouteRequest;
 import com.nangman.hub.application.dto.request.RoutePostRequest;
 import com.nangman.hub.application.dto.request.RouteSearchRequest;
+import com.nangman.hub.application.dto.response.NaverRouteResponse;
 import com.nangman.hub.application.dto.response.RouteDetailResponse;
 import com.nangman.hub.application.dto.response.RouteResponse;
 import com.nangman.hub.domain.entity.Hub;
@@ -25,6 +27,7 @@ import java.util.UUID;
 @Service
 public class RouteService {
 
+    private final NaverService naverService;
     private final RouteRepository routeRepository;
     private final HubRepository hubRepository;
 
@@ -33,6 +36,17 @@ public class RouteService {
         Hub toHub = hubRepository.findHub(postRequest.toHubId());
         Route route = routeRepository.save(postRequest.toEntity(fromHub, toHub));
         return RouteResponse.from(route);
+    }
+
+    public void createRouteWithHub(Hub fromHub, Hub toHub) {
+        List<NaverRouteResponse> directions = naverService.getBiDirections(
+                new NaverRouteRequest(fromHub.getLatitude(), fromHub.getLongitude()),
+                new NaverRouteRequest(toHub.getLatitude(), toHub.getLongitude())
+        );
+        routeRepository.saveAll(List.of(
+                new Route(fromHub, toHub, directions.get(0).duration(), directions.get(0).distance()),
+                new Route(toHub, fromHub, directions.get(1).duration(), directions.get(1).distance())
+        ));
     }
 
     @Transactional(readOnly = true)
