@@ -22,7 +22,7 @@ public class KafkaConsumerService {
     private final DeliveryService deliveryService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "user.shipper.events", groupId = "delivery")
+    @KafkaListener(topics = "user.shipper.events", groupId = "delivery", containerFactory = "kafkaShipperMessageListenerContainerFactory")
     public void consumeShipperEvent(ShipperMessage message) {
 
         try {
@@ -43,7 +43,7 @@ public class KafkaConsumerService {
         }
     }
 
-    @KafkaListener(topics = "order.create-success", groupId = "delivery")
+    @KafkaListener(topics = "order.create-success", groupId = "delivery", containerFactory = "kafkaStringListenerContainerFactory")
     public void consumeOrderCreateSuccessEvent(String message) {
         try {
             OrderEvent orderEvent = objectMapper.readValue(message, OrderEvent.class);
