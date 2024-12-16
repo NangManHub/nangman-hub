@@ -1,6 +1,6 @@
 package com.nangman.slack.infrastructure;
 
-import com.nangman.slack.application.dto.HubDto;
+import com.nangman.slack.application.dto.feign.HubDto;
 import com.nangman.slack.common.exception.CustomException;
 import com.nangman.slack.common.exception.ExceptionType;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;

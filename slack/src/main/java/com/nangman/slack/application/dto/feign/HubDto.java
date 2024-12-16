@@ -1,4 +1,4 @@
-package com.nangman.slack.application.dto;
+package com.nangman.slack.application.dto.feign;
 
 import java.util.UUID;
 

@@ -1,6 +1,6 @@
 package com.nangman.slack.infrastructure;
 
-import com.nangman.slack.application.dto.UserDto;
+import com.nangman.slack.application.dto.feign.UserDto;
 import com.nangman.slack.common.config.FeignConfig;
 import com.nangman.slack.common.exception.CustomException;
 import com.nangman.slack.common.exception.ExceptionType;

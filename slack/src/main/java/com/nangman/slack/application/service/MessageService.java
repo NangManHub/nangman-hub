@@ -1,6 +1,6 @@
 package com.nangman.slack.application.service;
 
-import com.nangman.slack.application.dto.UserDto;
+import com.nangman.slack.application.dto.feign.UserDto;
 import com.nangman.slack.application.dto.event.DeliveryEvent;
 import com.nangman.slack.application.dto.kafka.DeliveryResponse;
 import com.nangman.slack.application.dto.kafka.TrackResponse;
