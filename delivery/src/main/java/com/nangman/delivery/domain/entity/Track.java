@@ -122,4 +122,8 @@ public class Track extends BaseEntity {
     public void updateDelivery(Delivery delivery) {
         this.delivery = delivery;
     }
+
+    public void updateSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
 }

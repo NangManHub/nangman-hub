@@ -141,7 +141,6 @@ public class TrackService {
     public Track createCompanyTrack(@NotNull UUID hubId, @NotNull String address) {
         Shipper shipper = shipperRepository.getById(redisService.getShipperZSet(ShipperType.COMPANY, hubId, 0));
         return Track.builder()
-                .sequence(1)
                 .shipper(shipper)
                 .fromHubId(hubId)
                 .address(address)
