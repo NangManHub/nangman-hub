@@ -21,23 +21,19 @@ public class SlackMessageUtil implements MessageUtil {
     private String slackBotToken;
 
     private final MethodsClient methodsClient;
+    private final SlackUserUtil slackUserUtil;
 
     @Override
     public void sendMessage(String slackName, String message) {
         publishMessage(findBySlackName(slackName),message);
     }
 
-    private String findBySlackName(String slackName) {
-        try {
-            return methodsClient
-                    .usersList(request-> request.token(slackBotToken))
-                    .getMembers().stream()
-                    .filter(member -> member.getName().equals(slackName))
-                    .map(User::getId).findFirst().orElseThrow(
-                            () -> new CustomException(ExceptionType.SLACK_USER_NOT_FOUND));
-        } catch (IOException | SlackApiException e) {
-            throw new CustomException(ExceptionType.API_CALL_FAILED);
-        }
+
+    public String findBySlackName(String slackName) {
+        return slackUserUtil.getSlackUserList().stream()
+                .filter(member -> member.getName().equals(slackName))
+                .map(User::getId).findFirst().orElseThrow(
+                        () -> new CustomException(ExceptionType.SLACK_USER_NOT_FOUND));
     }
 
     private void publishMessage(String slackIdentityId, String message) {
