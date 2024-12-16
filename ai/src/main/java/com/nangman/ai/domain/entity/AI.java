@@ -1,9 +1,7 @@
 package com.nangman.ai.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -22,4 +20,9 @@ public class AI extends BaseEntity {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String response;
+
+    public AI(String prompt, String response) {
+        this.prompt = prompt;
+        this.response = response;
+    }
 }

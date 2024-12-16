@@ -27,3 +27,7 @@ management:
   tracing:
     sampling:
       probability: 1.0
+service:
+  google:
+    api:
+      key: ${GOOGLE_API_KEY}
