@@ -1,6 +1,7 @@
 package com.nangman.delivery.common.config;
 
 import com.nangman.delivery.application.dto.kafka.ShipperMessage;
+import com.nangman.delivery.application.dto.response.DeliveryResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -25,19 +26,24 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 @Configuration
 public class KafkaConfig {
 
-
     @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaServerURL;
 
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
+    public ProducerFactory<String, DeliveryResponse> deliveryResponseProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerURL);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        // Producer에서 메세지의 타입을 보내지 않겠다는 설정
+        configProps.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
+    @Bean
+    public KafkaTemplate<String, DeliveryResponse> deliveryResponseKafkaTemplate() {
+        return new KafkaTemplate<>(deliveryResponseProducerFactory());
+    }
 
     // Kafka 컨슈머 팩토리를 생성하는 빈을 정의합니다.
     // ConsumerFactory는 Kafka 컨슈머 인스턴스를 생성하는 데 사용됩니다.
@@ -70,10 +76,5 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory());
         // 설정된 리스너 컨테이너 팩토리를 반환합니다.
         return factory;
-    }
-
-    @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
     }
 }
