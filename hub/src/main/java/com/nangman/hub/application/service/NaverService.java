@@ -6,8 +6,6 @@ import com.nangman.hub.application.dto.response.NaverRouteResponse;
 import java.util.List;
 
 public interface NaverService {
-    String geocoding(String address);
-
     NaverRouteResponse directions(NaverRouteRequest reqFrom, NaverRouteRequest reqTo);
 
     List<NaverRouteResponse> getBiDirections(NaverRouteRequest reqFrom, NaverRouteRequest reqTo);

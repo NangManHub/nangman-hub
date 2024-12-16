@@ -34,33 +34,6 @@ public class NaverClient implements NaverService {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    public String geocoding(String address) {
-        URI uri = UriComponentsBuilder
-                .fromUriString(ROUTE_API)
-                .path("/map-geocode/v2/geocode")
-                .queryParam("query", address)
-                .encode()
-                .build()
-                .toUri();
-        log.info("uri = {}", uri);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", "application/json");
-        headers.add("x-ncp-apigw-api-key-id", clientId);
-        headers.add("x-ncp-apigw-api-key", clientSecret);
-
-        RequestEntity<Void> requestEntity = RequestEntity
-                .get(uri)
-                .headers(headers)
-                .build();
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
-        log.info("API Status Code: {}", responseEntity.getStatusCode());
-        log.info("API Body: {}", responseEntity.getBody());
-
-        return null;
-    }
-
     public NaverRouteResponse directions(NaverRouteRequest reqFrom, NaverRouteRequest reqTo) {
         URI uri = UriComponentsBuilder
                 .fromUriString(ROUTE_API)
