@@ -2,6 +2,7 @@ package com.nangman.order.presentation;
 
 import com.nangman.order.application.dto.request.OrderPostRequest;
 import com.nangman.order.application.dto.request.OrderPutRequest;
+import com.nangman.order.application.dto.request.OrderSearchRequest;
 import com.nangman.order.application.dto.response.OrderDetailGetResponse;
 import com.nangman.order.application.dto.response.OrderGetResponse;
 import com.nangman.order.application.dto.response.OrderPostResponse;
@@ -65,13 +66,15 @@ public class OrderController {
 
     @Operation(summary = "주문 검색 API", description = "주문을 검색합니다.")
     @GetMapping
-    public ResponseEntity<OrderSearchGetResponse> searchOrder(@RequestParam(required = false) UUID supplierId,
-                                                              @RequestParam(required = false) UUID receiverId,
-                                                              @RequestParam(required = false) UUID productId,
-                                                              @RequestParam(required = false) Integer productQuantity,
-                                                              @RequestParam(required = false) String requestMessage,
+    public ResponseEntity<OrderSearchGetResponse> searchOrder(OrderSearchRequest request,
                                                               @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(orderService.searchOrder(supplierId, receiverId, productId, productQuantity, requestMessage, pageable));
+        return ResponseEntity.ok(orderService.searchOrder(
+                request.supplierId(),
+                request.receiverId(),
+                request.productId(),
+                request.productQuantity(),
+                request.requestMessage(),
+                pageable));
     }
 
     @GetMapping("/ai/{orderId}")
