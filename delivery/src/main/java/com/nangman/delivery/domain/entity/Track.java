@@ -69,7 +69,7 @@ public class Track extends BaseEntity {
     @Column(name = "departure_time")
     private Date departureTime;
 
-    @Column(name = "route_id", nullable = false)
+    @Column(name = "route_id")
     private UUID routeId;
 
     @Builder
