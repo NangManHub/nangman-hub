@@ -45,8 +45,14 @@ public class Track extends BaseEntity {
     @Column(name = "from_hub_id", nullable = false)
     private UUID fromHubId;
 
+    @Column(name = "from_hub_name", length = 20)
+    private String fromHubName;
+
     @Column(name = "to_hub_id")
     private UUID toHubId;
+
+    @Column(name = "to_hub_name", length = 20)
+    private String toHubName;
 
     @Column(name = "address", length = 50)
     private String address;
@@ -73,13 +79,15 @@ public class Track extends BaseEntity {
     private UUID routeId;
 
     @Builder
-    public Track(Delivery delivery, Integer sequence, Shipper shipper, UUID fromHubId, UUID toHubId, String address,
+    private Track(Delivery delivery, Integer sequence, Shipper shipper, UUID fromHubId, String fromHubName, UUID toHubId, String toHubName, String address,
                  Integer expectDistance, Integer expectTime, UUID routeId) {
         this.delivery = delivery;
         this.sequence = sequence;
         this.shipper = shipper;
         this.fromHubId = fromHubId;
+        this.fromHubName = fromHubName;
         this.toHubId = toHubId;
+        this.toHubName = toHubName;
         this.address = address;
         this.expectDistance = expectDistance;
         this.expectTime = expectTime;
