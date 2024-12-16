@@ -57,4 +57,8 @@ public class Shipper {
                 .mapToLong(Track::getExpectDistance)
                 .sum();
     }
+
+    public void updateTotalDistance(Integer distance) {
+        this.totalDistance += distance;
+    }
 }
