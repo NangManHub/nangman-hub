@@ -30,7 +30,7 @@ public class KafkaConfig {
     private String kafkaServerURL;
 
     @Bean
-    public ProducerFactory<String, DeliveryResponse> deliveryResponseProducerFactory() {
+    public ProducerFactory<UUID, DeliveryResponse> deliveryResponseProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerURL);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class);
@@ -41,7 +41,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, DeliveryResponse> deliveryResponseKafkaTemplate() {
+    public KafkaTemplate<UUID, DeliveryResponse> deliveryResponseKafkaTemplate() {
         return new KafkaTemplate<>(deliveryResponseProducerFactory());
     }
 
