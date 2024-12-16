@@ -1,5 +1,6 @@
 package com.nangman.delivery.application.service;
 
+import com.nangman.delivery.application.dto.kafka.DeliveryEvent;
 import com.nangman.delivery.application.dto.request.DeliveryPostRequest;
 import com.nangman.delivery.application.dto.request.DeliveryPutRequest;
 import com.nangman.delivery.application.dto.request.DeliverySearchRequest;
@@ -16,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +42,7 @@ public class DeliveryService {
         delivery.addTrack(companyTrack);
 
         DeliveryResponse response = DeliveryResponse.from(deliveryRepository.save(delivery));
-        eventPublisher.publishEvent(response);
+        eventPublisher.publishEvent(new DeliveryEvent(response.id(), response));
 
         return response;
     }

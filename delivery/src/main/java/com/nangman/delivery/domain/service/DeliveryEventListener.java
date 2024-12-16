@@ -3,11 +3,11 @@ package com.nangman.delivery.domain.service;
 import com.nangman.delivery.application.dto.kafka.DeliveryEvent;
 import com.nangman.delivery.infrastructure.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class DeliveryEventListener {
     private final KafkaProducerService kafkaProducerService;
