@@ -27,7 +27,7 @@ public class Slack extends BaseEntity{
     @Column(name = "send_at", nullable = false)
     private LocalDateTime sendAt;
 
-    @Column(name = "receiver_id", nullable = false, length = 10)
+    @Column(name = "receiver_id", nullable = false, length = 20)
     private String receiverId;
 
 }

@@ -33,7 +33,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 20, nullable = false)
     private String slackId;
 
     public UserGetResponse toResponseDto() {
