@@ -12,6 +12,7 @@ import com.nangman.delivery.common.exception.ExceptionStatus;
 import com.nangman.delivery.common.exception.InfraStructureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,7 +44,8 @@ public class KafkaConsumerService {
         }
     }
 
-    @KafkaListener(topics = "order.create-success", groupId = "delivery", containerFactory = "kafkaStringListenerContainerFactory")
+    @KafkaListener(topics = "order.create-success", groupId = "delivery", containerFactory = "kafkaStringListenerContainerFactory", errorHandler = "kafkaCreateDeliveryErrorHandler")
+    @SendTo("delivery.create-fail")
     public void consumeOrderCreateSuccessEvent(String message) {
         try {
             OrderEvent orderEvent = objectMapper.readValue(message, OrderEvent.class);

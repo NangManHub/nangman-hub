@@ -14,6 +14,6 @@ public class DeliveryEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleDeliveryEvent(DeliveryEvent event) {
-        kafkaProducerService.sendDeliveryMessage(event.deliveryId(), event.message());
+        kafkaProducerService.sendDeliverySuccessMessage(event.deliveryId(), event.message());
     }
 }

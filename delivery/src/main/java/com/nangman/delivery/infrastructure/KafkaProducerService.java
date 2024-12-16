@@ -11,9 +11,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class KafkaProducerService {
 
-    private final KafkaTemplate<UUID, DeliveryResponse> kafkaTemplate;
+    private final KafkaTemplate<UUID, DeliveryResponse> kafkaDeliveryResponseTemplate;
 
-    public void sendDeliveryMessage(UUID uuid, DeliveryResponse message) {
-        kafkaTemplate.send("delivery.create-success", uuid, message);
+    public void sendDeliverySuccessMessage(UUID uuid, DeliveryResponse message) {
+        kafkaDeliveryResponseTemplate.send("delivery.create-success", uuid, message);
     }
 }
