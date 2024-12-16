@@ -86,6 +86,7 @@ public class Delivery extends BaseEntity {
         } else if (this.tracks.stream().anyMatch(t -> Objects.equals(t.getSequence(), track.getSequence()))) {
             throw new DomainException(ExceptionStatus.TRACK_SEQUENCE_DUPLICATED);
         }
+        track.updateDelivery(this);
         this.tracks.add(track);
     }
 

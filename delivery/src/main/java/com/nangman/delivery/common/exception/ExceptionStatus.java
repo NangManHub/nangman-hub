@@ -21,8 +21,11 @@ public enum ExceptionStatus {
     //AUTHORIZATION
     AUTHORIZATION_FAILED(HttpStatus.FORBIDDEN, "a001", "권한이 없습니다."),
 
+    //ORDER
+    ORDER_MESSAGE_INVALID(HttpStatus.BAD_REQUEST, "o001", "유효하지 않은 Order 메세지 입니다."),
+
     //HUB
-    HUB_SERVER_ERROR(HttpStatus.NOT_FOUND, "h001", "허브정보를 받아올 수 없습니다. 다시 시도해주세요."),;
+    HUB_SERVER_ERROR(HttpStatus.NOT_FOUND, "h001", "허브정보를 받아올 수 없습니다. 다시 시도해주세요.");
 
     private final int status;
     private final String customCode;
