@@ -57,8 +57,7 @@ public class OrderService {
         Order order = orderRepository.getById(orderId);
         CompanyDto companyDto = companyClient.getCompanyById(order.getReceiverId());
         authorizationUtils.validateHubManager(order.getReceiverId());
-        // TODO: Delivery 생성 후 SHIPPER 권한 확인 테스트 필요
-        // authorizationUtils.validateDeliveryShipper(order.getDeliveryId());
+        authorizationUtils.validateDeliveryShipper(order.getDeliveryId());
         authorizationUtils.validateCompanyAgent(companyDto.agentId());
 
         return OrderGetResponse.from(order);
@@ -108,5 +107,5 @@ public class OrderService {
         Order order = orderRepository.getById(deliveryEvent.orderId());
         order.updateDeliveryId(deliveryEvent.id());
     }
-    
+
 }
