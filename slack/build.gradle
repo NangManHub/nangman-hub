@@ -28,6 +28,9 @@ ext {
 }
 
 dependencies {
+	// kafka
+	implementation 'org.springframework.kafka:spring-kafka'
+
 	// slack
 	implementation("com.slack.api:bolt:1.18.0")
 	implementation("com.slack.api:bolt-servlet:1.18.0")
@@ -41,6 +44,7 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
