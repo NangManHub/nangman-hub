@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class ShipperController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 유저/배송담당자입니다.")
     })
     @PostMapping
-    public ResponseEntity<?> createShipper(@RequestHeader(name = "X-User-Id") UUID reqUserId, @RequestBody ShipperPostRequest shipperPostRequest) {
+    public ResponseEntity<?> createShipper(@RequestHeader(name = "X-User-Id") UUID reqUserId, @Valid @RequestBody ShipperPostRequest shipperPostRequest) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(shipperService.createShipper(reqUserId, shipperPostRequest));
     }
@@ -49,7 +50,7 @@ public class ShipperController {
     @PutMapping("/{shipperId}")
     public ResponseEntity<?> updateShipper(@RequestHeader(name = "X-User-Id") UUID reqUserId,
                                            @PathVariable UUID shipperId,
-                                           @RequestBody ShipperPutRequest shipperPutRequest) {
+                                           @Valid @RequestBody ShipperPutRequest shipperPutRequest) {
 
         return ResponseEntity.status(HttpStatus.OK).body(shipperService.updateShipper(reqUserId, shipperId, shipperPutRequest));
     }

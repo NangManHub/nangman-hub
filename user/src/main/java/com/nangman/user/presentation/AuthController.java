@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "중복된 아이디 입니다.")
     })
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest){
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest signupRequest){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.signup(signupRequest));
     }
@@ -48,7 +49,7 @@ public class AuthController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.")
     })
     @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest, HttpServletResponse response) {
+    public ResponseEntity<?> signin(@Valid @RequestBody SigninRequest signinRequest, HttpServletResponse response) {
 
         String accessToken = userService.signin(signinRequest);
 

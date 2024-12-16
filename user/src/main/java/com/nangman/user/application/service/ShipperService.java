@@ -42,6 +42,8 @@ public class ShipperService {
         User shipper = userRepository.findUser(shipperPostRequest.userId());
         if(shipper.getRole() != UserRole.SHIPPER) throw new CustomException(ExceptionType.ONLY_SHIPPER_REGISTERED);
 
+        if(shipperRepository.findById(shipperPostRequest.userId()).isPresent()) throw new CustomException(ExceptionType.SHIPPER_ALREADY_EXISTS);
+
         Shipper savedShipper = shipperRepository.save(shipperPostRequest.toEntity(shipper));
 
         eventPublisher.publishEvent(new ShipperEvent(savedShipper.getId(), ShipperMessage.of(ActionType.CREATE, savedShipper)));
@@ -55,8 +57,6 @@ public class ShipperService {
         verifyRole(reqUserId, shipperPutRequest.hubId());
 
         Shipper shipper = shipperRepository.findShipper(shipperId);
-
-        hubClient.getHub(shipperPutRequest.hubId());
 
         shipper.update(shipperPutRequest.hubId(), shipperPutRequest.type());
         
@@ -81,13 +81,7 @@ public class ShipperService {
 
         if(reqUserRole != UserRole.MANAGER && reqUserRole != UserRole.MASTER) throw new CustomException(ExceptionType.SHIPPER_ACCESS_DENIED);
 
-        if(reqUserRole == UserRole.MANAGER){
-//            HubDto hubByManagerId = hubClient.getHubByManagerId(reqUserId);
-//
-//            log.info("{}", hubByManagerId.hubId());
-//            log.info("{}", hubByManagerId.managerId());
-//
-//            if(hubByManagerId.hubId() != hubId) throw new CustomException(ExceptionType.SHIPPER_ACCESS_DENIED);
-        }
+        HubDto hub = hubClient.getHub(hubId);
+        if(reqUserRole == UserRole.MANAGER && !reqUserId.equals(hub.managerId())) throw new CustomException(ExceptionType.SHIPPER_ACCESS_DENIED);
     }
 }

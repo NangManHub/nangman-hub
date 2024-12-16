@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -80,7 +81,9 @@ public class Delivery extends BaseEntity {
     }
 
     public void addTrack(Track track) {
-        if (this.tracks.stream().anyMatch(t -> t.getSequence() == track.getSequence())) {
+        if(track.getSequence() == null) {
+            track.updateSequence(this.tracks.size() + 1);
+        } else if (this.tracks.stream().anyMatch(t -> Objects.equals(t.getSequence(), track.getSequence()))) {
             throw new DomainException(ExceptionStatus.TRACK_SEQUENCE_DUPLICATED);
         }
         this.tracks.add(track);

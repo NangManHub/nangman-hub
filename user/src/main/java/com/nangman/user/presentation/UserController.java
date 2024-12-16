@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -61,7 +62,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다. / 중복된 아이디 입니다.")
     })
     @PutMapping("/{userId}")
-    public ResponseEntity<?> updateUser(@RequestHeader("X-User-Id") UUID reqUserId, @PathVariable(name = "userId") UUID userId, @RequestBody UserPutRequest userPutRequest){
+    public ResponseEntity<?> updateUser(@RequestHeader("X-User-Id") UUID reqUserId, @PathVariable(name = "userId") UUID userId, @Valid @RequestBody UserPutRequest userPutRequest){
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(reqUserId, userId, userPutRequest));
     }
