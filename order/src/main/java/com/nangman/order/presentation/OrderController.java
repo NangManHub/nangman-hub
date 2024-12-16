@@ -2,6 +2,7 @@ package com.nangman.order.presentation;
 
 import com.nangman.order.application.dto.request.OrderPostRequest;
 import com.nangman.order.application.dto.request.OrderPutRequest;
+import com.nangman.order.application.dto.response.OrderDetailGetResponse;
 import com.nangman.order.application.dto.response.OrderGetResponse;
 import com.nangman.order.application.dto.response.OrderPostResponse;
 import com.nangman.order.application.dto.response.OrderSearchGetResponse;
@@ -71,6 +72,11 @@ public class OrderController {
                                                               @RequestParam(required = false) String requestMessage,
                                                               @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(orderService.searchOrder(supplierId, receiverId, productId, productQuantity, requestMessage, pageable));
+    }
+
+    @GetMapping("/ai/{orderId}")
+    public ResponseEntity<OrderDetailGetResponse> getOrderForAI(@PathVariable UUID orderId) {
+        return ResponseEntity.ok(orderService.getOrderForAI(orderId));
     }
 
 }

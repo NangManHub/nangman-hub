@@ -2,9 +2,11 @@ package com.nangman.order.application.service;
 
 import com.nangman.order.application.dto.CompanyDto;
 import com.nangman.order.application.dto.OrderDto;
-import com.nangman.order.application.dto.OrderEvent;
+import com.nangman.order.application.dto.ProductDto;
+import com.nangman.order.application.dto.event.OrderEvent;
 import com.nangman.order.application.dto.request.OrderPostRequest;
 import com.nangman.order.application.dto.request.OrderPutRequest;
+import com.nangman.order.application.dto.response.OrderDetailGetResponse;
 import com.nangman.order.application.dto.response.OrderGetResponse;
 import com.nangman.order.application.dto.response.OrderPostResponse;
 import com.nangman.order.application.dto.response.OrderSearchGetResponse;
@@ -90,5 +92,11 @@ public class OrderService {
     public OrderSearchGetResponse searchOrder(UUID supplierId, UUID receiverId, UUID productId, Integer productQuantity, String requestMessage, Pageable pageable) {
         Page<OrderDto> searchOrderList = orderQueryRepository.searchOrder(supplierId, receiverId, productId, productQuantity, requestMessage, pageable);
         return OrderSearchGetResponse.from(searchOrderList);
+    }
+
+    public OrderDetailGetResponse getOrderForAI(UUID orderId) {
+        Order order = orderRepository.getById(orderId);
+        ProductDto productDto = companyClient.getProductById(order.getProductId());
+        return OrderDetailGetResponse.of(order, productDto);
     }
 }

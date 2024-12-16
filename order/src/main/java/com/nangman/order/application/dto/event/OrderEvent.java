@@ -1,5 +1,6 @@
-package com.nangman.order.application.dto;
+package com.nangman.order.application.dto.event;
 
+import com.nangman.order.application.dto.CompanyDto;
 import com.nangman.order.domain.entity.Order;
 import java.util.UUID;
 
