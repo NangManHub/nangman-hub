@@ -96,7 +96,7 @@ public class RouteService {
 
         Hub toHub = hubRepository.findHub(toHubId);
         Hub prevHub = toHub.getParentHub();
-        if (prevHub != null) {
+        if (prevHub != null && prevHub != nextHub) {
             res.add(RouteDetailResponse.from(routeRepository.findRouteByHub(nextHub.getId(), prevHub.getId())));
             nextHub = prevHub;
         }
