@@ -15,9 +15,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "p_deliveries")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Delivery extends BaseEntity {
 
     @Id
@@ -79,7 +81,9 @@ public class Delivery extends BaseEntity {
     }
 
     public void addTrack(Track track) {
-        if (this.tracks.stream().anyMatch(t -> t.getSequence() == track.getSequence())) {
+        if(track.getSequence() == null) {
+            track.updateSequence(this.tracks.size() + 1);
+        } else if (this.tracks.stream().anyMatch(t -> Objects.equals(t.getSequence(), track.getSequence()))) {
             throw new DomainException(ExceptionStatus.TRACK_SEQUENCE_DUPLICATED);
         }
         this.tracks.add(track);
@@ -92,6 +96,7 @@ public class Delivery extends BaseEntity {
                 throw new DomainException(ExceptionStatus.TRACK_SEQUENCE_DUPLICATED);
             }
             sequences.add(track.getSequence());
+            track.updateDelivery(this);
         });
         this.tracks.addAll(tracks);
     }

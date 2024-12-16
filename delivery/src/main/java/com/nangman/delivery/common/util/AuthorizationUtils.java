@@ -36,7 +36,7 @@ public class AuthorizationUtils {
         UUID shipperId = getUserIdFromHeader();
         Track track = trackRepository.getById(trackId);
         UUID hubManagerId = UUID.randomUUID();
-        if (!track.getShipperId().equals(shipperId)) {
+        if (!track.getShipper().getId().equals(shipperId)) {
             throw new AuthException(ExceptionStatus.AUTHORIZATION_FAILED);
         }
     }
@@ -81,7 +81,7 @@ public class AuthorizationUtils {
         UUID shipperId = getUserIdFromHeader();
         Delivery delivery = deliveryRepository.getById(deliveryId);
 
-        if(delivery.getTracks().stream().map(Track::getShipperId).anyMatch(shipperId::equals))
+        if(delivery.getTracks().stream().map(track -> track.getShipper().getId()).anyMatch(shipperId::equals))
             return;
         throw new AuthException(ExceptionStatus.AUTHORIZATION_FAILED);
     }
