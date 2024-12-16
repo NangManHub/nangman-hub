@@ -128,15 +128,16 @@ public class TrackService {
                     return Track.builder()
                             .sequence(sequence.getAndSet(sequence.get() + 1))
                             .shipper(shipper)
-                            .fromHubId(fromHubId)
-                            .toHubId(toHubId)
+                            .fromHubId(routeDetailResponse.fromHub().hubId())
+                            .fromHubName(routeDetailResponse.fromHub().name())
+                            .toHubId(routeDetailResponse.toHub().hubId())
+                            .toHubName(routeDetailResponse.toHub().name())
                             .expectDistance(routeDetailResponse.distance())
                             .expectTime(routeDetailResponse.duration())
                             .routeId(routeDetailResponse.routeId())
                             .build();
                 })
                 .toList();
-        //TODO: Company 배송 생성
     }
 
     public Track createCompanyTrack(@NotNull UUID hubId, @NotNull String address) {
