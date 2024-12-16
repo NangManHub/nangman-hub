@@ -19,6 +19,6 @@ public class AuditorAwareImpl implements AuditorAware<UUID> {
             HttpServletRequest request = requestAttributes.getRequest();
             return Optional.of(UUID.fromString(request.getHeader("X-User-Id")));
         }
-        return Optional.empty();
+        return Optional.of(UUID.fromString("00000000-0000-0000-0000-000000000000"));
     }
 }

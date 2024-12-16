@@ -56,4 +56,8 @@ public class Order extends BaseTimeEntity {
         this.requestMessage = requestMessage;
     }
 
+    public void updateDeliveryId(UUID deliveryId) {
+        this.deliveryId = deliveryId;
+    }
+
 }

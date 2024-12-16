@@ -1,5 +1,8 @@
 //package com.nangman.hub.common.util;
 //
+//import com.nangman.hub.application.dto.request.NaverRouteRequest;
+//import com.nangman.hub.application.dto.response.NaverRouteResponse;
+//import com.nangman.hub.application.service.NaverService;
 //import com.nangman.hub.domain.entity.Hub;
 //import com.nangman.hub.domain.entity.Route;
 //import com.nangman.hub.domain.repository.HubRepository;
@@ -16,6 +19,7 @@
 //@Component
 //public class DataRunner implements ApplicationRunner {
 //
+//    private final NaverService naverService;
 //    private final HubRepository hubRepository;
 //    private final RouteRepository routeRepository;
 //
@@ -26,8 +30,8 @@
 //        Hub hubA = new Hub("경기 남부 센터", "경기도 이천시 덕평로 257-21", 37.1896213142136, 127.375050006958, UUID.randomUUID(), null);
 //        Hub hubB = new Hub("대전광역시 센터", "대전 서구 둔산로 100", 36.3503849976553, 127.384633005948, UUID.randomUUID(), null);
 //        Hub hubC = new Hub("대구광역시 센터", "대구 북구 태평로 161", 35.8758849492106, 128.596129208483, UUID.randomUUID(), null);
-//        List<Hub> parentHubList = List.of(hubA, hubB, hubC);
-//        hubRepository.saveAll(parentHubList);
+//        List<Hub> centralHubList = List.of(hubA, hubB, hubC);
+//        hubRepository.saveAll(centralHubList);
 //
 //        List<Hub> hubList = List.of(
 //                new Hub("서울특별시 센터", "서울특별시 송파구 송파대로 55", 37.4742027808565, 127.123621185562, UUID.randomUUID(), hubA),
@@ -48,21 +52,25 @@
 //        hubRepository.saveAll(hubList);
 //
 //        // Route data
-//        // TODO: duration, distance 실제 데이터로 바꾸기
-//        List<Route> routeList = new java.util.ArrayList<>(List.of(
-//                new Route(hubA, hubB, 1000, 1000),
-//                new Route(hubB, hubA, 1000, 1000),
-//                new Route(hubB, hubC, 2000, 2000),
-//                new Route(hubC, hubB, 2000, 2000),
-//                new Route(hubC, hubA, 3000, 3000),
-//                new Route(hubA, hubC, 3000, 3000)
-//        ));
-//        int i = 1;
+//        List<Route> routeList = new java.util.ArrayList<>();
+//
+//        for (int i = 0; i < centralHubList.size(); i++) {
+//            for (int j = i + 1; j < centralHubList.size(); j++) {
+//                addRoutes(routeList, centralHubList.get(i), centralHubList.get(j));
+//            }
+//        }
 //        for (Hub hub : hubList) {
-//            routeList.add(new Route(hub, hub.getParentHub(), i, i));
-//            routeList.add(new Route(hub.getParentHub(), hub, i, i));
-//            i++;
+//            addRoutes(routeList, hub, hub.getParentHub());
 //        }
 //        routeRepository.saveAll(routeList);
+//    }
+//
+//    private void addRoutes(List<Route> routeList, Hub fromHub, Hub toHub) {
+//        List<NaverRouteResponse> directions = naverService.getBiDirections(
+//                new NaverRouteRequest(fromHub.getLatitude(), fromHub.getLongitude()),
+//                new NaverRouteRequest(toHub.getLatitude(), toHub.getLongitude())
+//        );
+//        routeList.add(new Route(fromHub, toHub, directions.get(0).duration(), directions.get(0).distance()));
+//        routeList.add(new Route(toHub, fromHub, directions.get(1).duration(), directions.get(1).distance()));
 //    }
 //}

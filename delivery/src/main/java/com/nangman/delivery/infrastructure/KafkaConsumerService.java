@@ -1,12 +1,18 @@
 package com.nangman.delivery.infrastructure;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nangman.delivery.application.dto.kafka.ActionType;
+import com.nangman.delivery.application.dto.kafka.OrderEvent;
 import com.nangman.delivery.application.dto.kafka.ShipperMessage;
+import com.nangman.delivery.application.dto.request.DeliveryPostRequest;
+import com.nangman.delivery.application.service.DeliveryService;
 import com.nangman.delivery.application.service.ShipperService;
 import com.nangman.delivery.common.exception.ExceptionStatus;
 import com.nangman.delivery.common.exception.InfraStructureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,8 +20,10 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumerService {
 
     private final ShipperService shipperService;
+    private final DeliveryService deliveryService;
+    private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "user.shipper.events", groupId = "delivery-shipper-id")
+    @KafkaListener(topics = "user.shipper.events", groupId = "delivery", containerFactory = "kafkaShipperMessageListenerContainerFactory")
     public void consumeShipperEvent(ShipperMessage message) {
 
         try {
@@ -33,6 +41,25 @@ public class KafkaConsumerService {
             }
         } catch (IllegalArgumentException e) {
             throw new InfraStructureException(ExceptionStatus.SHIPPER_MESSAGE_INVALID_ACTION);
+        }
+    }
+
+    @KafkaListener(topics = "order.create-success", groupId = "delivery", containerFactory = "kafkaStringListenerContainerFactory", errorHandler = "kafkaCreateDeliveryErrorHandler")
+    @SendTo("delivery.create-fail")
+    public void consumeOrderCreateSuccessEvent(String message) {
+        try {
+            OrderEvent orderEvent = objectMapper.readValue(message, OrderEvent.class);
+            DeliveryPostRequest deliveryPostRequest = DeliveryPostRequest.builder()
+                    .orderId(orderEvent.orderId())
+                    .recipient(orderEvent.agentId())
+                    .toHubId(orderEvent.toHubId())
+                    .fromHubId(orderEvent.fromHubId())
+                    .address(orderEvent.address())
+                    .build();
+
+            deliveryService.createDelivery(deliveryPostRequest);
+        } catch (JsonProcessingException e) {
+            throw new InfraStructureException(ExceptionStatus.ORDER_MESSAGE_INVALID);
         }
     }
 }

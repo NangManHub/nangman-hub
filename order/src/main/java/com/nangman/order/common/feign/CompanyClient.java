@@ -4,6 +4,7 @@ import com.nangman.order.application.dto.CompanyDto;
 import com.nangman.order.application.dto.ProductDto;
 import com.nangman.order.common.exception.CompanyNotFoundException;
 import com.nangman.order.common.exception.InsufficientStockException;
+import com.nangman.order.common.exception.ProductNotFoundException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -27,6 +28,10 @@ public interface CompanyClient {
     @PutMapping("/products/quantity/{productId}")
     ProductDto checkProductQuantity(@PathVariable UUID productId, @RequestParam Integer quantity);
 
+    @CircuitBreaker(name = "companyClient", fallbackMethod = "fallbackGetProductById")
+    @GetMapping("/products/{productId}")
+    ProductDto getProductById(@PathVariable UUID productId);
+
     default CompanyDto fallbackGetCompanyByAgentId(UUID agentId, Throwable throwable) {
         throw new CompanyNotFoundException();
     }
@@ -39,4 +44,7 @@ public interface CompanyClient {
         throw new InsufficientStockException();
     }
 
+     default ProductDto fallbackGetProductById(UUID productId, Throwable throwable) {
+        throw new ProductNotFoundException();
+     }
 }

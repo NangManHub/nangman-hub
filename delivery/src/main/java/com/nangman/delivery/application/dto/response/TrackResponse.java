@@ -13,7 +13,9 @@ public record TrackResponse(
         Integer sequence,
         UUID shipperId,
         UUID fromHubId,
+        String fromHubName,
         UUID toHubId,
+        String toHubName,
         String address,
         Integer expectDistance,
         Integer expectTime,
@@ -29,7 +31,9 @@ public record TrackResponse(
                 .sequence(track.getSequence())
                 .shipperId(track.getShipper().getId())
                 .fromHubId(track.getFromHubId())
+                .fromHubName(track.getFromHubName())
                 .toHubId(track.getToHubId())
+                .toHubName(track.getToHubName())
                 .address(track.getAddress())
                 .expectDistance(track.getExpectDistance())
                 .expectTime(track.getExpectTime())
