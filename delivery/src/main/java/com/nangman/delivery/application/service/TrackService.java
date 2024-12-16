@@ -124,6 +124,7 @@ public class TrackService {
                     boolean isCenter = routeDetailResponse.toHub().parentHubId() == null;
                     UUID shipperId = redisService.getShipperZSet(ShipperType.HUB, isCenter ? routeDetailResponse.toHub().hubId() : routeDetailResponse.toHub().parentHubId(), routeDetailResponse.distance());
                     Shipper shipper = shipperRepository.getById(shipperId);
+                    shipper.updateTotalDistance(routeDetailResponse.distance());
                     return Track.builder()
                             .sequence(sequence.getAndSet(sequence.get() + 1))
                             .shipper(shipper)
