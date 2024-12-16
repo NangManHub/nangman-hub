@@ -1,6 +1,7 @@
 package com.nangman.delivery.domain.entity;
 
 import com.nangman.delivery.domain.enums.ShipperType;
+import com.nangman.delivery.domain.enums.TrackStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,5 +50,11 @@ public class Shipper {
     public void update(UUID hubId, ShipperType type) {
         this.hubId = hubId;
         this.shipperType = type;
+    }
+
+    public Long getCurrentDistance() {
+        return tracks.stream().filter(track -> track.getStatus() != TrackStatus.ARRIVE)
+                .mapToLong(Track::getExpectDistance)
+                .sum();
     }
 }
