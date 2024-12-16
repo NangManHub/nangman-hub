@@ -1,7 +1,9 @@
 package com.nangman.slack.application.service;
 
+import com.nangman.slack.application.dto.event.AIEvent;
 import com.nangman.slack.application.dto.feign.UserDto;
 import com.nangman.slack.application.dto.event.DeliveryEvent;
+import com.nangman.slack.application.dto.kafka.AIMessage;
 import com.nangman.slack.application.dto.kafka.DeliveryResponse;
 import com.nangman.slack.application.dto.kafka.TrackResponse;
 import com.nangman.slack.domain.entity.Slack;
@@ -74,4 +76,20 @@ public class MessageService {
         );
     }
 
+    @Transactional
+    public void sendOrderInfoToManger(AIMessage aiMessage) {
+
+        UserDto receiverInfo = userClient.getUserById(aiMessage.receiverId());
+        String slackId = receiverInfo.slackId();
+        String message = aiMessage.message();
+
+        slackRepository.save(Slack.builder()
+                .userId(receiverInfo.id())
+                .message(message)
+                .sendAt(LocalDateTime.now())
+                .receiverId(slackId)
+                .build());
+
+        eventPublisher.publishEvent(new AIEvent(slackId, message));
+    }
 }

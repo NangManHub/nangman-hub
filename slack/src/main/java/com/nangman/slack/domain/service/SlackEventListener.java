@@ -1,5 +1,6 @@
 package com.nangman.slack.domain.service;
 
+import com.nangman.slack.application.dto.event.AIEvent;
 import com.nangman.slack.application.dto.event.DeliveryEvent;
 import com.nangman.slack.common.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,11 @@ public class SlackEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleDeliveryEvent(DeliveryEvent event) {
+        messageUtil.sendMessage(event.slackId(), event.message());
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleAIEvent(AIEvent event) {
         messageUtil.sendMessage(event.slackId(), event.message());
     }
 

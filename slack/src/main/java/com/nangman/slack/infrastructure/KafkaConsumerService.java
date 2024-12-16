@@ -1,5 +1,6 @@
 package com.nangman.slack.infrastructure;
 
+import com.nangman.slack.application.dto.kafka.AIMessage;
 import com.nangman.slack.application.dto.kafka.DeliveryResponse;
 import com.nangman.slack.application.service.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -19,4 +20,8 @@ public class KafkaConsumerService {
         messageService.sendDeliveryInfoToShipper(deliveryInfo);
     }
 
+    @KafkaListener(topics = "ai.message-success", groupId = "slack-ai-id", containerFactory = "aiKafkaListenerContainerFactory")
+    public void consumeAiMessage(AIMessage aiMessage){
+        messageService.sendOrderInfoToManger(aiMessage);
+    }
 }
