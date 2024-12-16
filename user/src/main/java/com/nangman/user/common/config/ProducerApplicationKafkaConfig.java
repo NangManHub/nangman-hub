@@ -27,6 +27,9 @@ public class ProducerApplicationKafkaConfig {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerURL);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        // Producer에서 메세지의 타입(ShipperMessage)를 보내지 않겠다는 설정
+        configProps.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

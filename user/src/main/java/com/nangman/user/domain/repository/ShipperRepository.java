@@ -18,4 +18,6 @@ public interface ShipperRepository {
     default Shipper findShipper(UUID shipperId){
         return findByIdAndIsDeletedFalse(shipperId).orElseThrow(() -> new CustomException(ExceptionType.SHIPPER_NOT_FOUND));
     }
+
+    Optional<Shipper> findById(UUID userId);
 }
