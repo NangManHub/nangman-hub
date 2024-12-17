@@ -31,18 +31,19 @@ public class GoogleClient implements GoogleService {
     public String genAIResponse(String prompt) {
         URI uri = UriComponentsBuilder
                 .fromUriString(URL)
-                .path("/v1beta/models/gemini-1.5-flash-latest:generateContent")
-                .queryParam("key", apiKey)
+                .path("/v1beta/models/gemini-pro:generateContent")
                 .encode()
                 .build()
                 .toUri();
-        log.info("uri = {}", uri);
 
-        String requestBody = String.format("{ \"contents\": [{\"parts\": [{\"text\": \"%s\"}]}] }", prompt);
+        String requestBody = """
+                { "contents": [{"parts": [{"text": "%s"}]}] }
+                """.formatted(prompt);
 
         RequestEntity<String> requestEntity = RequestEntity
                 .post(uri)
                 .header("Content-Type", "application/json")
+                .header("x-goog-api-key", apiKey)
                 .body(requestBody);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
