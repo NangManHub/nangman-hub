@@ -19,12 +19,14 @@ import com.nangman.order.domain.repository.OrderQueryRepository;
 import com.nangman.order.domain.repository.OrderRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -106,6 +108,15 @@ public class OrderService {
     public void updateDeliveryId(DeliveryEvent deliveryEvent) {
         Order order = orderRepository.getById(deliveryEvent.orderId());
         order.updateDeliveryId(deliveryEvent.id());
+        log.info("배송 생성에 성공했습니다.");
+    }
+
+    @KafkaListener(topics = "delivery.create-fail", groupId = "order", containerFactory = "kafkaListenerContainerFactory")
+    @Transactional
+    public void deleteOrderOnDeliveryFail(OrderEvent orderEvent) {
+        Order order = orderRepository.getById(orderEvent.orderId());
+        order.updateIsDeleted(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+        log.info("배송 생성에 실패했습니다.");
     }
 
 }

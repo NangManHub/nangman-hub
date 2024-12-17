@@ -1,6 +1,7 @@
 package com.nangman.order.common.config;
 
 import com.nangman.order.application.dto.event.DeliveryEvent;
+import com.nangman.order.application.dto.event.OrderEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -41,20 +42,20 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, String> consumerFactory() {
+    public ConsumerFactory<UUID, OrderEvent> OrderEventConsumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerURL);
-        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "order");
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, UUIDDeserializer.class);
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        configProps.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+        configProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, OrderEvent.class.getName());
         return new DefaultKafkaConsumerFactory<>(configProps);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<UUID, OrderEvent> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<UUID, OrderEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(OrderEventConsumerFactory());
         return factory;
     }
 
