@@ -1,0 +1,50 @@
+server:
+  port: 19093
+
+spring:
+  application:
+    name: company
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL}
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 5
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 60000
+        failureRateThreshold: 50
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0

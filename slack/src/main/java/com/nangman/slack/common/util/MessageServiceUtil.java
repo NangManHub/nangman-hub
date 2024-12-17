@@ -18,21 +18,35 @@ public class MessageServiceUtil {
         return userClient.getUserById(receiverId);
     }
 
-    public String generateMessage(String shipperName, TrackResponse trackInfo){
+    public String generateMessage(String shipperName, TrackResponse trackInfo, boolean isLast) {
 
-        String destination = trackInfo.toHubId() == null ? trackInfo.address() : trackInfo.toHubName();
+        String template = isLast
+                ?
+                """
+                %s 기사님! 오늘의 업체배송건입니다.
+                도착 : %s
+                """
+                :
+                """
+                %s 기사님! 오늘의 허브배송건입니다.
+                출발 : %s
+                도착 : %s
+                예상 시간 : %d분
+                예상 거리 : %dkm
+                """;
 
-        return String.format(
-                "%s 기사님! 오늘의 배송건입니다.\n" +
-                        "출발 : %s\n" +
-                        "도착 : %s\n" +
-                        "예상 시간 : %d분\n" +
-                        "예상 거리 : %dkm",
+        return isLast
+                ? template.formatted(
                 shipperName,
-                trackInfo.fromHubName(),
-                destination,
+                trackInfo.address() == null ? "알 수 없음" : trackInfo.address()
+        )
+                : template.formatted(
+                shipperName,
+                trackInfo.fromHubName() == null ? "알 수 없음" : trackInfo.fromHubName(),
+                trackInfo.toHubName() == null ? "알 수 없음" : trackInfo.toHubName(),
                 trackInfo.expectTime(),
                 trackInfo.expectDistance()
         );
     }
+
 }

@@ -5,6 +5,7 @@ import com.nangman.slack.application.dto.feign.UserDto;
 import com.nangman.slack.application.dto.event.DeliveryEvent;
 import com.nangman.slack.application.dto.kafka.AIMessage;
 import com.nangman.slack.application.dto.kafka.DeliveryResponse;
+import com.nangman.slack.application.dto.kafka.TrackResponse;
 import com.nangman.slack.common.util.MessageServiceUtil;
 import com.nangman.slack.domain.entity.Slack;
 import com.nangman.slack.domain.repository.SlackRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -30,24 +32,29 @@ public class MessageService {
     @Transactional
     public void sendDeliveryInfoToShipper(DeliveryResponse deliveryInfo) {
 
-        List<Slack> slackList = deliveryInfo.tracks().stream()
-                .map(track -> {
-                    UserDto receiverInfo = messageServiceUtil.getReceiverInfo(track.shipperId());
+        List<Slack> slackList = new ArrayList<>();
 
-                    String message = messageServiceUtil.generateMessage(receiverInfo.name(), track);
+        List<TrackResponse> tracks = deliveryInfo.tracks();
+        int totalTrackCnt = tracks.size();
 
-                    // 3. Slack Message 전달
-                    eventPublisher.publishEvent(new DeliveryEvent(receiverInfo.slackId(), message));
+        for(int i=0; i<totalTrackCnt; i++){
+            TrackResponse track = tracks.get(i);
+            UserDto receiverInfo = messageServiceUtil.getReceiverInfo(track.shipperId());
 
-                    // Slack 객체 생성 및 반환
-                    return Slack.builder()
-                            .userId(receiverInfo.id())
-                            .message(message)
-                            .sendAt(LocalDateTime.now())
-                            .receiverId(receiverInfo.slackId())
-                            .build();
-                })
-                .toList();
+            boolean isLast = (i == (totalTrackCnt-1));
+            String message = messageServiceUtil.generateMessage(receiverInfo.name(), track, isLast);
+
+            // Slack Message 이벤트 발생
+            eventPublisher.publishEvent(new DeliveryEvent(receiverInfo.slackId(), message));
+
+            slackList.add(Slack.builder()
+                    .userId(receiverInfo.id())
+                    .message(message)
+                    .sendAt(LocalDateTime.now())
+                    .receiverId(receiverInfo.slackId())
+                    .build()
+            );
+        }
 
         slackRepository.saveAll(slackList);
     }

@@ -16,7 +16,7 @@ public record OrderDetailGetResponse(
                 order.getId(),
                 product.productId(),
                 product.name(),
-                product.quantity(),
+                order.getProductQuantity(),
                 order.getRequestMessage());
     }
 }
