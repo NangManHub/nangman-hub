@@ -1,0 +1,60 @@
+server:
+  port: 19091
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        # ai
+        - id: ai
+          uri: lb://ai
+          predicates:
+            - Path=/ais/**
+        # company
+        - id: company
+          uri: lb://company
+          predicates:
+            - Path=/companies/**,/products/**
+        # delivery
+        - id: delivery
+          uri: lb://delivery
+          predicates:
+            - Path=/deliveries/**
+        # hub
+        - id: hub
+          uri: lb://hub
+          predicates:
+            - Path=/hubs/**
+        # order
+        - id: order
+          uri: lb://order
+          predicates:
+            - Path=/orders/**
+        # slack
+        - id: slack
+          uri: lb://slack
+          predicates:
+            - Path=/slacks/**
+        # user
+        - id: user
+          uri: lb://user
+          predicates:
+            - Path=/auth/**,/users/**,/shippers/**
+      discovery:
+        locator:
+          enabled: true  # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL}
+
+service:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+  gateway:
+    secret-key: ${GATEWAY_SECRET_KEY}

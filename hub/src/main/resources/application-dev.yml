@@ -1,0 +1,60 @@
+server:
+  port: 19095
+spring:
+  application:
+    name: hub
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/nangmanhub
+    username: postgres
+    password: admin1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: default
+      password: systempass
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+management:
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
+  tracing:
+    sampling:
+      probability: 1.0
+service:
+  naver:
+    client:
+      id: ${NAVER_CLIENT_ID}
+      secret: ${NAVER_CLIENT_SECRET}
+  auth:
+    request:
+      userId: ${AUTH_REQUEST_USER_ID}
+
+springdoc:
+  default-consumes-media-type: application/json;charset=UTF-8 # 기본 요청 미디어 타입 지정
+  default-produces-media-type: application/json;charset=UTF-8 # 기본 응답 미디어 타입 지정
+  api-docs:
+    groups:
+      enabled: true # API 문서 그룹 기능 활성화
+  swagger-ui:
+    path: /swagger-ui.html # Swagger UI 접근 경로 지정
+    tags-sorter: alpha # tag 정렬 방식 지정 (alpha / null)
+    operations-sorter: alpha # 작업 정렬 방식 지정 (alpha / method / null)
+    doc-expansion: none # 문서 펼침 방식 (none / list / full)
+    disable-swagger-default-url: true
+  paths-to-match: # 문서화 적용할 API 경로 지정
+    - /**
