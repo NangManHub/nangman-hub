@@ -9,7 +9,6 @@ import com.nangman.company.domain.enums.UserRole;
 import com.nangman.company.domain.repository.CompanyRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.web.PagedModel;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -23,12 +22,8 @@ public class AuthorizationUtils {
 
     public void validateHubManager(UUID requestHubId) {
         if (getUserRoleFromAuthentication() == UserRole.MANAGER) {
-            PagedModel<HubDto> hubDto = hubClient.getHubByManagerId(getUserIdFromAuthentication());
-            UUID hubId = hubDto.getContent().stream()
-                    .findFirst()
-                    .map(HubDto::hubId)
-                    .orElseThrow(HubNotMatchedException::new);
-            if (!requestHubId.equals(hubId)) {
+            HubDto hubDto = hubClient.getHubById(requestHubId);
+            if (!hubDto.managerId().equals(getUserIdFromAuthentication())) {
                 throw new HubNotMatchedException();
             }
         }
@@ -40,6 +35,12 @@ public class AuthorizationUtils {
             if (!company.getId().equals(requestCompanyId)) {
                 throw new AgentMismatchException();
             }
+        }
+    }
+
+    public void validateHubMaster(UUID requestHubId) {
+        if (getUserRoleFromAuthentication() == UserRole.MASTER) {
+            HubDto hubDto = hubClient.getHubById(requestHubId);
         }
     }
 
