@@ -1,6 +1,5 @@
 package com.nangman.user.application.service;
 
-import com.nangman.user.application.dto.HubDto;
 import com.nangman.user.application.dto.kafka.ActionType;
 import com.nangman.user.application.dto.kafka.ShipperEvent;
 import com.nangman.user.application.dto.kafka.ShipperMessage;
@@ -10,7 +9,7 @@ import com.nangman.user.application.dto.response.ShipperPostResponse;
 import com.nangman.user.application.dto.response.ShipperPutResponse;
 import com.nangman.user.common.exception.CustomException;
 import com.nangman.user.common.exception.ExceptionType;
-import com.nangman.user.common.feign.HubClient;
+import com.nangman.user.common.util.AuthorizationUtils;
 import com.nangman.user.domain.entity.Shipper;
 import com.nangman.user.domain.entity.User;
 import com.nangman.user.domain.entity.UserRole;
@@ -31,13 +30,13 @@ public class ShipperService {
 
     private final UserRepository userRepository;
     private final ShipperRepository shipperRepository;
-    private final HubClient hubClient;
     private final ApplicationEventPublisher eventPublisher;
+    private final AuthorizationUtils authorizationUtils;
 
     @Transactional
     public ShipperPostResponse createShipper(UUID reqUserId, ShipperPostRequest shipperPostRequest) {
 
-        verifyRole(reqUserId, shipperPostRequest.hubId());
+        authorizationUtils.verifyShipperManagePermission(reqUserId, shipperPostRequest.hubId());
 
         User shipper = userRepository.findUser(shipperPostRequest.userId());
         if(shipper.getRole() != UserRole.SHIPPER) throw new CustomException(ExceptionType.ONLY_SHIPPER_REGISTERED);
@@ -54,7 +53,7 @@ public class ShipperService {
     @Transactional
     public ShipperPutResponse updateShipper(UUID reqUserId, UUID shipperId, ShipperPutRequest shipperPutRequest) {
 
-        verifyRole(reqUserId, shipperPutRequest.hubId());
+        authorizationUtils.verifyShipperManagePermission(reqUserId, shipperPutRequest.hubId());
 
         Shipper shipper = shipperRepository.findShipper(shipperId);
 
@@ -69,19 +68,10 @@ public class ShipperService {
     public void deleteShipper(UUID reqUserId, UUID shipperId) {
         Shipper shipper = shipperRepository.findShipper(shipperId);
 
-        verifyRole(reqUserId, shipper.getHubId());
+        authorizationUtils.verifyShipperManagePermission(reqUserId, shipper.getHubId());
 
         shipper.delete(reqUserId);
 
         eventPublisher.publishEvent(new ShipperEvent(shipper.getId(), ShipperMessage.of(ActionType.DELETE, shipper)));
-    }
-
-    private void verifyRole(UUID reqUserId, UUID hubId){
-        UserRole reqUserRole = userRepository.findUser(reqUserId).getRole();
-
-        if(reqUserRole != UserRole.MANAGER && reqUserRole != UserRole.MASTER) throw new CustomException(ExceptionType.SHIPPER_ACCESS_DENIED);
-
-        HubDto hub = hubClient.getHub(hubId);
-        if(reqUserRole == UserRole.MANAGER && !reqUserId.equals(hub.managerId())) throw new CustomException(ExceptionType.SHIPPER_ACCESS_DENIED);
     }
 }

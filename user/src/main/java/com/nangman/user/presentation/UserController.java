@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 마스터입니다.")
     })
     @GetMapping
-    public ResponseEntity<?> searchUser(@RequestHeader("X-User-Id") UUID reqUserId,Pageable pageable, @RequestParam(required = false) List<UserRole> roles) {
+    public ResponseEntity<?> searchUser(@RequestHeader("X-User-Id") UUID reqUserId, @PageableDefault Pageable pageable, @RequestParam(required = false) List<UserRole> roles) {
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.search(reqUserId, pageable, roles));
     }

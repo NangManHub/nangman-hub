@@ -8,6 +8,7 @@ import com.nangman.user.application.dto.response.UserGetResponse;
 import com.nangman.user.application.dto.response.UserPutResponse;
 import com.nangman.user.common.exception.CustomException;
 import com.nangman.user.common.exception.ExceptionType;
+import com.nangman.user.common.util.AuthorizationUtils;
 import com.nangman.user.common.util.JwtUtil;
 import com.nangman.user.domain.entity.User;
 import com.nangman.user.domain.entity.UserRole;
@@ -33,6 +34,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final AuthorizationUtils authorizationUtils;
 
     private final UserQueryRepository userQueryRepository;
 
@@ -61,7 +63,7 @@ public class UserService {
     }
 
     public Page<UserGetResponse> search(UUID reqUserId, Pageable pageable, List<UserRole> roles) {
-        verifyMasterRole(reqUserId);
+        authorizationUtils.verifyMasterRole(reqUserId);
 
         return userQueryRepository.searchUser(pageable, roles);
     }
@@ -70,15 +72,14 @@ public class UserService {
 
         User reqUser = userRepository.findUser(reqUserId);
 
-        // Master가 아닌 유저가 다른 유저를 조회시 예외 처리
-        if(reqUser.getRole() != UserRole.MASTER && !reqUser.getId().equals(userId)) throw new CustomException(ExceptionType.USER_ACCESS_DENIED);
+        authorizationUtils.verifyUserAccessPermission(reqUser, userId);
 
         return userRepository.findUser(userId).toResponseDto();
     }
 
     @Transactional
     public UserPutResponse updateUser(UUID reqUserId, UUID userId, UserPutRequest userPutRequest) {
-        verifyMasterRole(reqUserId);
+        authorizationUtils.verifyMasterRole(reqUserId);
         checkDuplicateUsername(userPutRequest.username());
 
         User user = userRepository.findUser(userId);
@@ -95,16 +96,11 @@ public class UserService {
 
     @Transactional
     public void deleteUser(UUID reqUserId, UUID userId) {
-        verifyMasterRole(reqUserId);
+        authorizationUtils.verifyMasterRole(reqUserId);
 
         User user = userRepository.findUser(userId);
 
         user.delete(reqUserId);
-    }
-
-    public void verifyMasterRole(UUID reqUserId){
-        User user = userRepository.findByIdAndIsDeletedFalse(reqUserId).orElseThrow(() -> new CustomException(ExceptionType.MASTER_NOT_FOUND));
-        if(user.getRole() != UserRole.MASTER) throw new CustomException(ExceptionType.MASTER_ROLE_REQUIRED);
     }
 
     public void checkDuplicateUsername(String username){
