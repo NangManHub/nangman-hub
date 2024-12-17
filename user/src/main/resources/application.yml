@@ -1,0 +1,62 @@
+# 1. Spring Application 설정
+spring:
+  application:
+    name: user
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          time_zone: Asia/Seoul
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER_URL}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+# 2. Eureka 서버의 URL 지정
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL}
+
+service:
+  jwt:
+    access-expiration: ${JWT_ACCESS_EXPIRATION}
+    secret-key: ${JWT_SECRET_KEY}
+
+server:
+  port: ${SERVER_PORT}
+
+springdoc:
+  default-consumes-media-type: application/json;charset=UTF-8 # 기본 요청 미디어 타입 지정
+  default-produces-media-type: application/json;charset=UTF-8 # 기본 응답 미디어 타입 지정
+  api-docs:
+    groups:
+      enabled: true # API 문서 그룹 기능 활성화
+  swagger-ui:
+    path: /swagger-ui.html # Swagger UI 접근 경로 지정
+    tags-sorter: alpha # tag 정렬 방식 지정 (alpha / null)
+    operations-sorter: alpha # 작업 정렬 방식 지정 (alpha / method / null)
+    doc-expansion: none # 문서 펼침 방식 (none / list / full)
+    disable-swagger-default-url: true
+  paths-to-match: # 문서화 적용할 API 경로 지정
+    - /**
+
+management:
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0
