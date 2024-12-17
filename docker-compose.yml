@@ -3,6 +3,8 @@ services:
   ai:
     build:
       context: ./ai
+      cache_from:
+        - openjdk:17-jdk-slim
     container_name: ai_service_container
     env_file:
       - ./ai/.env
@@ -115,6 +117,8 @@ services:
   slack:
     build:
       context: ./slack
+      cache_from:
+        - openjdk:17-jdk-slim
     container_name: slack-service
     env_file:
       - ./slack/.env
