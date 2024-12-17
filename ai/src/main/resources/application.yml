@@ -16,6 +16,15 @@ spring:
         show-sql: true
         format_sql: true
         use_sql_comments: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
 eureka:
   client:
     service-url:
@@ -31,3 +40,6 @@ service:
   google:
     api:
       key: ${GOOGLE_API_KEY}
+  auth:
+    request:
+      userId: ${AUTH_REQUEST_USER_ID}

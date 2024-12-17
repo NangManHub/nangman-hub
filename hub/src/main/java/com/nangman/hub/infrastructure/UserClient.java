@@ -11,6 +11,6 @@ import java.util.UUID;
 @FeignClient(name = "user")
 public interface UserClient extends UserService {
 
-    @GetMapping("/users/{userId}")
+    @GetMapping(value = "/users/{userId}")
     UserResponse getUserById(@PathVariable UUID userId);
 }
