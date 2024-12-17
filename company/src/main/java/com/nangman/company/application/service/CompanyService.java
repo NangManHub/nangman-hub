@@ -1,6 +1,7 @@
 package com.nangman.company.application.service;
 
 import com.nangman.company.application.dto.CompanyDto;
+import com.nangman.company.application.dto.HubDto;
 import com.nangman.company.application.dto.request.CompanyPostRequest;
 import com.nangman.company.application.dto.request.CompanyPutRequest;
 import com.nangman.company.application.dto.response.CompanyGetResponse;
@@ -32,6 +33,7 @@ public class CompanyService {
 
     @Transactional
     public CompanyPostResponse createCompany(CompanyPostRequest request) {
+        authorizationUtils.validateHubMaster(request.hubId());
         authorizationUtils.validateHubManager(request.hubId());
         Company company = companyRepository.save(request.toEntity());
         return CompanyPostResponse.from(company);
@@ -57,7 +59,7 @@ public class CompanyService {
     public void deleteCompany(UUID companyId) {
         Company company = companyRepository.getById(companyId);
         authorizationUtils.validateHubManager(company.getHubId());
-        company.updateIsDeleted(authorizationUtils.getUserIdFromAuthentication());
+        company.softDelete(authorizationUtils.getUserIdFromAuthentication());
     }
 
     public CompanySearchGetResponse searchCompany(String name, UUID hubId, UUID agentId, CompanyType type, String address, Pageable pageable) {

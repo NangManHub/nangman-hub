@@ -62,4 +62,9 @@ public class Company extends BaseTimeEntity {
         this.type = request.type();
         this.address = request.address();
     }
+
+    public void softDelete(UUID userId) {
+        this.updateIsDeleted(userId);
+        this.products.forEach(product -> product.updateIsDeleted(userId));
+    }
 }

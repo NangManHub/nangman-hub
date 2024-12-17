@@ -2,9 +2,12 @@ package com.nangman.order.application.service;
 
 import com.nangman.order.application.dto.CompanyDto;
 import com.nangman.order.application.dto.OrderDto;
-import com.nangman.order.application.dto.OrderEvent;
+import com.nangman.order.application.dto.ProductDto;
+import com.nangman.order.application.dto.event.DeliveryEvent;
+import com.nangman.order.application.dto.event.OrderEvent;
 import com.nangman.order.application.dto.request.OrderPostRequest;
 import com.nangman.order.application.dto.request.OrderPutRequest;
+import com.nangman.order.application.dto.response.OrderDetailGetResponse;
 import com.nangman.order.application.dto.response.OrderGetResponse;
 import com.nangman.order.application.dto.response.OrderPostResponse;
 import com.nangman.order.application.dto.response.OrderSearchGetResponse;
@@ -18,6 +21,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,8 +57,7 @@ public class OrderService {
         Order order = orderRepository.getById(orderId);
         CompanyDto companyDto = companyClient.getCompanyById(order.getReceiverId());
         authorizationUtils.validateHubManager(order.getReceiverId());
-        // TODO: Delivery 생성 후 SHIPPER 권한 확인 테스트 필요
-        // authorizationUtils.validateDeliveryShipper(order.getDeliveryId());
+        authorizationUtils.validateDeliveryShipper(order.getDeliveryId());
         authorizationUtils.validateCompanyAgent(companyDto.agentId());
 
         return OrderGetResponse.from(order);
@@ -91,4 +94,18 @@ public class OrderService {
         Page<OrderDto> searchOrderList = orderQueryRepository.searchOrder(supplierId, receiverId, productId, productQuantity, requestMessage, pageable);
         return OrderSearchGetResponse.from(searchOrderList);
     }
+
+    public OrderDetailGetResponse getOrderForAI(UUID orderId) {
+        Order order = orderRepository.getById(orderId);
+        ProductDto productDto = companyClient.getProductById(order.getProductId());
+        return OrderDetailGetResponse.of(order, productDto);
+    }
+
+    @KafkaListener(topics = "delivery.create-success", groupId = "order", containerFactory = "kafkaDeliveryEventContainerFactory")
+    @Transactional
+    public void updateDeliveryId(DeliveryEvent deliveryEvent) {
+        Order order = orderRepository.getById(deliveryEvent.orderId());
+        order.updateDeliveryId(deliveryEvent.id());
+    }
+
 }
