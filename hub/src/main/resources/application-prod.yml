@@ -5,9 +5,9 @@ spring:
     name: hub
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/nangmanhub
+    url: jdbc:postgresql://nangman-hub-postgresql-1:5432/hubs
     username: postgres
-    password: admin1234
+    password: mysecretpassword
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,11 +21,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://eureka-server-service:19090/eureka/
 management:
   zipkin:
     tracing:
-      endpoint: "http://localhost:9411/api/v2/spans"
+      endpoint: "http://nangman-hub-zipkin-1:9411/api/v2/spans"
   tracing:
     sampling:
       probability: 1.0
