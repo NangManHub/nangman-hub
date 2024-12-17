@@ -59,7 +59,7 @@ public class CompanyService {
     public void deleteCompany(UUID companyId) {
         Company company = companyRepository.getById(companyId);
         authorizationUtils.validateHubManager(company.getHubId());
-        company.updateIsDeleted(authorizationUtils.getUserIdFromAuthentication());
+        company.softDelete(authorizationUtils.getUserIdFromAuthentication());
     }
 
     public CompanySearchGetResponse searchCompany(String name, UUID hubId, UUID agentId, CompanyType type, String address, Pageable pageable) {
