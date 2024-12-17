@@ -194,17 +194,3 @@ docker compose up -d --build
 | 이주희 | 권현준 | 박준형 | 연제민 |
 | --- | --- | --- | --- |
 | ✴︎ 팀장 <br> ✴︎ Company <br> ✴︎ Order | ✴︎ User <br> ✴︎ Slack | ✴︎ Delivery <br> ✴︎ Track | ✴︎ Hub <br> ✴︎ AI |
-
-<style>
-  /* <details> 태그의 너비 조정 */
-  details {
-    width: 90%; /* 너비를 90%로 설정 */
-    margin-bottom: 30px; 
-  }
-
-  /* <summary> 글자 크기 키우기 */
-  summary {
-    font-size: 1.25rem; /* 글자 크기 증가 (원하는 크기로 조정 가능) */
-    font-weight: bold; /* 글자 두껍게 */
-  }
-</style>
