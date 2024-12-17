@@ -7,6 +7,8 @@
 3. [ERD](#📐-ERD )   
 4. [기술 스택](#⚒️-기술-스택)   
 5. [트러블 슈팅](#💣-트러블-슈팅)
+6. [관련 Link](#🔗-Link)
+7. [팀원 소개](#👥-팀원-소개)
 
 ## 🎯 프로젝트 목표 
 - Microservices Architecture 기반의 B2B 물류 관리 및 배송 시스템을 개발합니다.
@@ -32,7 +34,7 @@ docker compose up -d --build
 ```
 
 ## 📐 ERD 
-![ERD](https://github.com/user-attachments/assets/2d5ca910-2475-4092-89c2-42e4291f7eb7)
+![ERD](https://github.com/user-attachments/assets/6d09014c-fd4b-4613-8f18-55865e141193)
 
 ## ⚒️ 기술 스택 
 
