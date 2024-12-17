@@ -1,0 +1,227 @@
+version: '3.8'
+services:
+#  ai:
+#    build:
+#      context: ./ai
+#    container_name: ai_service_container
+#    env_file:
+#      - ./ai/.env
+#    networks:
+#      - nangmanhub_net
+#    depends_on:
+#       postgresql:
+#         condition: service_healthy
+
+  company:
+    build:
+      context: ./company
+      cache_from:
+        - openjdk:17-jdk-slim
+    container_name: company-service
+    env_file:
+      - ./company/.env
+    networks:
+      - nangmanhub_net
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      gateway:
+        condition: service_started
+
+  delivery:
+    build:
+      context: ./delivery
+      cache_from:
+        - openjdk:17-jdk-slim
+    container_name: delivery-service
+    env_file:
+      - ./delivery/.env
+    networks:
+      - nangmanhub_net
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      gateway:
+        condition: service_started
+
+  eureka-server:
+    build:
+      context: ./eureka-server
+      cache_from:
+        - openjdk:17-jdk-slim
+    container_name: eureka-server-service
+#    env_file:
+#      - ./eureka-server/.env
+    ports:
+      - "19090:19090"
+    networks:
+      - nangmanhub_net
+    depends_on:
+      zipkin:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: ./gateway
+      cache_from:
+        - openjdk:17-jdk-slim
+    container_name: gateway-service
+    env_file:
+      - ./gateway/.env
+    networks:
+      - nangmanhub_net
+    ports:
+      - "19091:19091"
+    depends_on:
+      - kafka
+      - kafka-ui
+      - zookeeper
+      - redis
+      - eureka-server
+      - postgresql
+
+  hub:
+    build:
+      context: ./hub
+      cache_from:
+        - openjdk:17-jdk-slim
+    container_name: hub-service
+#    env_file:
+#      - ./hub/.env
+    networks:
+      - nangmanhub_net
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      gateway:
+        condition: service_started
+
+  order:
+    build:
+      context: ./order
+      cache_from:
+        - openjdk:17-jdk-slim
+    container_name: order-service
+    env_file:
+      - ./order/.env
+    networks:
+      - nangmanhub_net
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+#  slack:
+#    build:
+#      context: ./slack
+#    container_name: slack-service
+#    env_file:
+#      - ./slack/.env
+#    networks:
+#      - nangmanhub_net
+#    depends_on:
+#      postgresql:
+#        condition: service_healthy
+
+  user:
+    build:
+      context: ./user
+      cache_from:
+        - openjdk:17-jdk-slim
+    container_name: user-service
+    env_file:
+      - ./user/.env
+    networks:
+      - nangmanhub_net
+    depends_on:
+      gateway:
+        condition: service_started
+      postgresql:
+        condition: service_healthy
+
+  postgresql:
+    image: postgres:17
+    restart: always
+    healthcheck:
+     test: pg_isready -U ${POSTGRES_USERNAME}
+     interval: 10s
+     timeout: 60s
+     retries: 5
+     start_period: 80s
+    env_file:
+      - .env
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - nangmanhub_net
+
+  zookeeper:
+    image: wurstmeister/zookeeper:3.4.6
+    env_file:
+      - .env
+    platform: linux/amd64
+    ports:
+      - "2181:2181"
+    networks:
+      - nangmanhub_net
+    volumes:
+      - zookeeper-data:/data
+      - zookeeper-datalog:/datalog
+      - zookeeper-logs:/logs
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    env_file:
+      - .env
+    platform: linux/amd64
+    ports:
+      - "9092:9092"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - kafka-data:/var/lib/kafka/data
+      - kafka-secrets:/etc/kafka/secrets
+    networks:
+      - nangmanhub_net
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    env_file:
+      - .env
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
+    networks:
+      - nangmanhub_net
+
+  redis:
+    image: redis:latest
+    env_file:
+      - .env
+    platform: linux/amd64
+    networks:
+      - nangmanhub_net
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    env_file:
+      - .env
+    platform: linux/amd64
+    ports:
+      - "9411:9411"
+    networks:
+      - nangmanhub_net
+
+networks:
+  nangmanhub_net:
+    driver: bridge
+
+volumes:
+    db_volume:
+    zookeeper-data:
+    zookeeper-datalog:
+    zookeeper-logs:
+    kafka-data:
+    kafka-secrets:
