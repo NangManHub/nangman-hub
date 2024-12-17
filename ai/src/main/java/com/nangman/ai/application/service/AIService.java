@@ -95,7 +95,7 @@ public class AIService {
                         orderRes.orderId(),
                         recipientRes.name(), recipientRes.slackId(),
                         orderRes.productName(), orderRes.productQuantity(),
-                        orderRes.requestMessage(),
+                        orderRes.requestMessage() == null ? "없음" : orderRes.requestMessage(),
                         hubRes.name(),
                         String.join(", ", req.toHubNameList()),
                         req.address(),
