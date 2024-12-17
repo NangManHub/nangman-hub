@@ -1,16 +1,16 @@
 version: '3.8'
 services:
-#  ai:
-#    build:
-#      context: ./ai
-#    container_name: ai_service_container
-#    env_file:
-#      - ./ai/.env
-#    networks:
-#      - nangmanhub_net
-#    depends_on:
-#       postgresql:
-#         condition: service_healthy
+  ai:
+    build:
+      context: ./ai
+    container_name: ai_service_container
+    env_file:
+      - ./ai/.env
+    networks:
+      - nangmanhub_net
+    depends_on:
+       postgresql:
+         condition: service_healthy
 
   company:
     build:
@@ -50,8 +50,8 @@ services:
       cache_from:
         - openjdk:17-jdk-slim
     container_name: eureka-server-service
-#    env_file:
-#      - ./eureka-server/.env
+    env_file:
+      - ./eureka-server/.env
     ports:
       - "19090:19090"
     networks:
@@ -88,8 +88,8 @@ services:
       cache_from:
         - openjdk:17-jdk-slim
     container_name: hub-service
-#    env_file:
-#      - ./hub/.env
+    env_file:
+      - ./hub/.env
     networks:
       - nangmanhub_net
     depends_on:
@@ -112,17 +112,17 @@ services:
       postgresql:
         condition: service_healthy
 
-#  slack:
-#    build:
-#      context: ./slack
-#    container_name: slack-service
-#    env_file:
-#      - ./slack/.env
-#    networks:
-#      - nangmanhub_net
-#    depends_on:
-#      postgresql:
-#        condition: service_healthy
+  slack:
+    build:
+      context: ./slack
+    container_name: slack-service
+    env_file:
+      - ./slack/.env
+    networks:
+      - nangmanhub_net
+    depends_on:
+      postgresql:
+        condition: service_healthy
 
   user:
     build:

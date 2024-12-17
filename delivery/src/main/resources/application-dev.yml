@@ -2,6 +2,7 @@ spring:
   application:
     name: delivery
 
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -42,7 +43,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER_URL}
+      defaultZone: http://localhost:19090/eureka
 
 service:
   gateway:
@@ -51,7 +52,7 @@ service:
 management:
   zipkin:
     tracing:
-      endpoint: ${ZIPKIN_ENDPOINT}
+      endpoint: http://localhost:9411/api/v2/spans
   tracing:
     sampling:
       probability: 1.0

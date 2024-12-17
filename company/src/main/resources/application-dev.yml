@@ -6,9 +6,9 @@ spring:
     name: company
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${POSTGRES_URL}
-    username: ${POSTGRES_USERNAME}
-    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/company
+    username:
+    password:
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,7 +17,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER_URL}
+      defaultZone: http://localhost:19090/eureka
 
 resilience4j:
   circuitbreaker:
@@ -44,7 +44,7 @@ management:
         enabled: true
   zipkin:
     tracing:
-      endpoint: ${ZIPKIN_ENDPOINT}
+      endpoint: "http://localhost:9411/api/v2/spans"
   tracing:
     sampling:
       probability: 1.0

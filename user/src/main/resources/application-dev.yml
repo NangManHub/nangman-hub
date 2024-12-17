@@ -1,48 +1,42 @@
-server:
-  port: 19095
+# 1. Spring Application 설정
 spring:
   application:
-    name: hub
+    name: user
   datasource:
-    driver-class-name: org.postgresql.Driver
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         show_sql: true
         format_sql: true
         use_sql_comments: true
-        default_batch_fetch_size: 100
-    open-in-view: false
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      username: ${REDIS_USERNAME}
-      password: ${REDIS_PASSWORD}
+        jdbc:
+          time_zone: Asia/Seoul
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER_URL}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+# 2. Eureka 서버의 URL 지정
 eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
-management:
-  zipkin:
-    tracing:
-      endpoint: ${ZIPKIN_ENDPOINT}
-  tracing:
-    sampling:
-      probability: 1.0
+
 service:
-  naver:
-    client:
-      id: ${NAVER_CLIENT_ID}
-      secret: ${NAVER_CLIENT_SECRET}
-  auth:
-    request:
-      userId: ${AUTH_REQUEST_USER_ID}
+  jwt:
+    access-expiration: ${JWT_ACCESS_EXPIRATION}
+    secret-key: ${JWT_SECRET_KEY}
+
+server:
+  port: ${SERVER_PORT}
 
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8 # 기본 요청 미디어 타입 지정
@@ -58,3 +52,11 @@ springdoc:
     disable-swagger-default-url: true
   paths-to-match: # 문서화 적용할 API 경로 지정
     - /**
+
+management:
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0
